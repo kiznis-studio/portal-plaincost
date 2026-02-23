@@ -1,0 +1,54 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getAllMsas, formatRpp } from '../../lib/db';
+
+const db = Astro.locals.runtime.env.DB;
+const msas = await getAllMsas(db);
+---
+
+<Base
+  title="Cost of Living by Metro Area"
+  description="Compare cost of living across 384 U.S. metropolitan areas. Regional Price Parities for goods, services, and housing."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Metros' }]}
+>
+  <section class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-2">Cost of Living by Metro Area</h1>
+    <p class="text-[var(--color-text-secondary)] mb-6">{msas.length} metro areas &middot; National average = 100</p>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+            <th class="pb-2 font-medium">Metro</th>
+            <th class="pb-2 font-medium text-right">Overall</th>
+            <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
+            <th class="pb-2 font-medium text-right hidden sm:table-cell">Services</th>
+            <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
+          </tr>
+        </thead>
+        <tbody>
+          {msas.map(msa => (
+            <tr class="border-b border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+              <td class="py-3">
+                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline font-medium text-sm">{msa.name}</a>
+              </td>
+              <td class="py-3 text-right">
+                <span class={msa.rpp_all >= 100 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}>{formatRpp(msa.rpp_all)}</span>
+              </td>
+              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_goods)}</td>
+              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_services)}</td>
+              <td class="py-3 text-right hidden md:table-cell">{formatRpp(msa.rpp_rents)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Source: Bureau of Economic Analysis, Regional Price Parities. Index where national average = 100.
+    </p>
+  </section>
+</Base>

@@ -1,0 +1,99 @@
+---
+import Base from '../layouts/Base.astro';
+import { getAllMsas, formatRpp } from '../lib/db';
+
+const db = Astro.locals.runtime.env.DB;
+const msas = await getAllMsas(db);
+---
+
+<Base
+  title="Salary Equivalent Calculator"
+  description="Calculate what salary you need in a new city to maintain your standard of living. Compare purchasing power between metro areas."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Calculator' }]}
+>
+  <section class="max-w-2xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-2">Salary Equivalent Calculator</h1>
+    <p class="text-[var(--color-text-secondary)] mb-8">
+      Find out what salary you'd need in a different city to maintain the same purchasing power.
+    </p>
+
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+      <div class="space-y-6">
+        <div>
+          <label class="block text-sm font-medium mb-2" for="salary">Current Annual Salary ($)</label>
+          <input
+            type="number"
+            id="salary"
+            value="100000"
+            min="0"
+            step="1000"
+            class="w-full h-12 px-4 text-base rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)] focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)]"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2" for="from-metro">Current Metro Area</label>
+          <select id="from-metro" class="w-full h-12 px-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]">
+            {msas.map(m => (
+              <option value={m.rpp_all} data-name={m.name}>{m.name} ({formatRpp(m.rpp_all)})</option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2" for="to-metro">Target Metro Area</label>
+          <select id="to-metro" class="w-full h-12 px-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]">
+            {msas.map((m, i) => (
+              <option value={m.rpp_all} data-name={m.name} selected={i === 1}>{m.name} ({formatRpp(m.rpp_all)})</option>
+            ))}
+          </select>
+        </div>
+
+        <div class="border-t border-[var(--color-border)] pt-6 text-center">
+          <div class="text-sm text-[var(--color-text-secondary)] mb-1">You would need</div>
+          <div class="text-4xl font-bold text-[var(--color-primary)]" id="result">$0</div>
+          <div class="text-sm text-[var(--color-text-secondary)] mt-1" id="result-label">for equivalent purchasing power</div>
+
+          <div class="mt-4 text-sm" id="result-diff"></div>
+        </div>
+      </div>
+    </div>
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Based on BEA Regional Price Parities. This calculator provides estimates for general comparison purposes only.
+    </p>
+  </section>
+
+  <script is:inline>
+    function calculate() {
+      var salary = parseFloat(document.getElementById('salary').value) || 0;
+      var fromRpp = parseFloat(document.getElementById('from-metro').value) || 100;
+      var toRpp = parseFloat(document.getElementById('to-metro').value) || 100;
+
+      var equivalent = Math.round(salary * (toRpp / fromRpp));
+      var diff = equivalent - salary;
+
+      document.getElementById('result').textContent = '$' + equivalent.toLocaleString();
+
+      var diffEl = document.getElementById('result-diff');
+      if (diff > 0) {
+        diffEl.className = 'mt-4 text-sm text-amber-600 dark:text-amber-400';
+        diffEl.textContent = 'That\'s $' + diff.toLocaleString() + ' more than your current salary (+' + ((diff / salary) * 100).toFixed(1) + '%)';
+      } else if (diff < 0) {
+        diffEl.className = 'mt-4 text-sm text-teal-600 dark:text-teal-400';
+        diffEl.textContent = 'That\'s $' + Math.abs(diff).toLocaleString() + ' less than your current salary (' + ((diff / salary) * 100).toFixed(1) + '%)';
+      } else {
+        diffEl.className = 'mt-4 text-sm text-[var(--color-text-secondary)]';
+        diffEl.textContent = 'Same cost of living';
+      }
+    }
+
+    document.getElementById('salary').addEventListener('input', calculate);
+    document.getElementById('from-metro').addEventListener('change', calculate);
+    document.getElementById('to-metro').addEventListener('change', calculate);
+    calculate();
+  </script>
+</Base>

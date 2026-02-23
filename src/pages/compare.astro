@@ -1,0 +1,108 @@
+---
+import Base from '../layouts/Base.astro';
+import { getMsaBySlug, getAllMsas, formatRpp, salaryEquivalent } from '../lib/db';
+
+const db = Astro.locals.runtime.env.DB;
+const from = Astro.url.searchParams.get('from') || '';
+const to = Astro.url.searchParams.get('to') || '';
+
+const fromMsa = from ? await getMsaBySlug(db, from) : null;
+const toMsa = to ? await getMsaBySlug(db, to) : null;
+const allMsas = await getAllMsas(db);
+
+const categories = fromMsa && toMsa ? [
+  { label: 'Overall', from: fromMsa.rpp_all, to: toMsa.rpp_all },
+  { label: 'Goods', from: fromMsa.rpp_goods, to: toMsa.rpp_goods },
+  { label: 'Services', from: fromMsa.rpp_services, to: toMsa.rpp_services },
+  { label: 'Rents', from: fromMsa.rpp_rents, to: toMsa.rpp_rents },
+] : [];
+---
+
+<Base
+  title={fromMsa && toMsa ? `Compare: ${fromMsa.name} vs ${toMsa.name}` : 'Compare Cost of Living'}
+  description={fromMsa && toMsa
+    ? `Side-by-side cost of living comparison: ${fromMsa.name} (${formatRpp(fromMsa.rpp_all)}) vs ${toMsa.name} (${formatRpp(toMsa.rpp_all)}).`
+    : 'Compare the cost of living between two U.S. metro areas side by side.'
+  }
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Compare' }]}
+>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-6">Compare Cost of Living</h1>
+
+    <form action="/compare" method="get" class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
+      <div>
+        <label class="block text-sm font-medium mb-2" for="from">From</label>
+        <select name="from" id="from" class="w-full h-12 px-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]">
+          <option value="">Select metro...</option>
+          {allMsas.map(m => (
+            <option value={m.slug} selected={m.slug === from}>{m.name} ({formatRpp(m.rpp_all)})</option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm font-medium mb-2" for="to">To</label>
+        <select name="to" id="to" class="w-full h-12 px-4 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] text-[var(--color-text)]">
+          <option value="">Select metro...</option>
+          {allMsas.map(m => (
+            <option value={m.slug} selected={m.slug === to}>{m.name} ({formatRpp(m.rpp_all)})</option>
+          ))}
+        </select>
+      </div>
+      <div class="sm:col-span-2">
+        <button type="submit" class="px-6 py-3 bg-[var(--color-primary)] text-white rounded-lg font-medium hover:opacity-90 transition-opacity">Compare</button>
+      </div>
+    </form>
+
+    {fromMsa && toMsa && (
+      <div>
+        <h2 class="text-lg font-semibold mb-4">{fromMsa.name} vs {toMsa.name}</h2>
+
+        <div class="overflow-x-auto mb-8">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+                <th class="pb-2 font-medium">Category</th>
+                <th class="pb-2 font-medium text-right">{fromMsa.name.split(',')[0]}</th>
+                <th class="pb-2 font-medium text-right">{toMsa.name.split(',')[0]}</th>
+                <th class="pb-2 font-medium text-right">Difference</th>
+              </tr>
+            </thead>
+            <tbody>
+              {categories.map(cat => {
+                const diff = cat.to - cat.from;
+                return (
+                  <tr class="border-b border-[var(--color-border)]">
+                    <td class="py-3 font-medium">{cat.label}</td>
+                    <td class="py-3 text-right">{formatRpp(cat.from)}</td>
+                    <td class="py-3 text-right">{formatRpp(cat.to)}</td>
+                    <td class="py-3 text-right">
+                      <span class={diff > 0 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}>
+                        {diff > 0 ? '+' : ''}{diff.toFixed(1)}
+                      </span>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+          <h3 class="font-semibold mb-3">Salary Equivalent</h3>
+          <p class="text-sm text-[var(--color-text-secondary)] mb-2">
+            A $100,000 salary in <strong>{fromMsa.name.split(',')[0]}</strong> would need to be:
+          </p>
+          <div class="text-3xl font-bold text-[var(--color-primary)]">
+            ${salaryEquivalent(100000, fromMsa.rpp_all, toMsa.rpp_all).toLocaleString()}
+          </div>
+          <p class="text-sm text-[var(--color-text-secondary)] mt-1">
+            in <strong>{toMsa.name.split(',')[0]}</strong> for equivalent purchasing power.
+          </p>
+        </div>
+      </div>
+    )}
+  </section>
+</Base>

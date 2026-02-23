@@ -1,0 +1,111 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getStateBySlug, getStateHistory, getMsasByState, formatRpp, rppDiff } from '../../lib/db';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/404');
+
+const db = Astro.locals.runtime.env.DB;
+const state = await getStateBySlug(db, slug);
+if (!state) return Astro.redirect('/404');
+
+const history = await getStateHistory(db, state.abbr);
+const msas = await getMsasByState(db, state.abbr);
+
+const categories = [
+  { label: 'Overall', value: state.rpp_all },
+  { label: 'Goods', value: state.rpp_goods },
+  { label: 'Services', value: state.rpp_services },
+  { label: 'Rents', value: state.rpp_rents },
+];
+---
+
+<Base
+  title={`Cost of Living in ${state.name}`}
+  description={`Cost of living in ${state.name}: RPP index ${formatRpp(state.rpp_all)} (${rppDiff(state.rpp_all)}). ${state.msa_count} metro areas with price data.`}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'States', href: '/states' }, { name: state.name }]}
+>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+      <a href="/states" class="hover:text-[var(--color-primary)]">States</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-1">Cost of Living in {state.name}</h1>
+    <p class="text-[var(--color-text-secondary)] mb-6">{state.msa_count} metro areas &middot; Data year: {state.year}</p>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      {categories.map(cat => (
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 text-center">
+          <div class={`text-2xl font-bold ${cat.value && cat.value >= 100 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}`}>
+            {formatRpp(cat.value)}
+          </div>
+          <div class="text-xs text-[var(--color-text-secondary)]">{cat.label}</div>
+        </div>
+      ))}
+    </div>
+
+    {msas.length > 0 && (
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">Metro Areas in {state.name}</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+                <th class="pb-2 font-medium">Metro</th>
+                <th class="pb-2 font-medium text-right">Overall</th>
+                <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
+                <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
+              </tr>
+            </thead>
+            <tbody>
+              {msas.map(msa => (
+                <tr class="border-b border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+                  <td class="py-3">
+                    <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline font-medium text-sm">{msa.name}</a>
+                  </td>
+                  <td class="py-3 text-right">{formatRpp(msa.rpp_all)}</td>
+                  <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_goods)}</td>
+                  <td class="py-3 text-right hidden md:table-cell">{formatRpp(msa.rpp_rents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    {history.length > 1 && (
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">RPP History</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+                <th class="pb-2 font-medium">Year</th>
+                <th class="pb-2 font-medium text-right">Overall</th>
+                <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
+                <th class="pb-2 font-medium text-right hidden sm:table-cell">Services</th>
+                <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map(h => (
+                <tr class="border-b border-[var(--color-border)]">
+                  <td class="py-2 font-medium">{h.year}</td>
+                  <td class="py-2 text-right">{formatRpp(h.rpp_all)}</td>
+                  <td class="py-2 text-right hidden sm:table-cell">{formatRpp(h.rpp_goods)}</td>
+                  <td class="py-2 text-right hidden sm:table-cell">{formatRpp(h.rpp_services)}</td>
+                  <td class="py-2 text-right hidden md:table-cell">{formatRpp(h.rpp_rents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Source: Bureau of Economic Analysis, Regional Price Parities. Index where national average = 100.
+    </p>
+  </section>
+</Base>

@@ -1,0 +1,77 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getMostExpensiveMsas, getLeastExpensiveMsas, getHighestRentMsas, formatRpp } from '../../lib/db';
+
+const db = Astro.locals.runtime.env.DB;
+const tab = Astro.url.searchParams.get('tab') || 'expensive';
+
+const mostExpensive = await getMostExpensiveMsas(db, 25);
+const leastExpensive = await getLeastExpensiveMsas(db, 25);
+const highestRent = await getHighestRentMsas(db, 25);
+
+const tabs = [
+  { id: 'expensive', label: 'Most Expensive' },
+  { id: 'cheapest', label: 'Cheapest' },
+  { id: 'rents', label: 'Highest Rents' },
+];
+
+const currentData = tab === 'cheapest' ? leastExpensive
+  : tab === 'rents' ? highestRent
+  : mostExpensive;
+---
+
+<Base
+  title="Cost of Living Rankings"
+  description="Rankings of U.S. metros by cost of living, goods prices, and rent costs. Compare the most and least expensive places to live."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Rankings' }]}
+>
+  <section class="max-w-6xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-2">Cost of Living Rankings</h1>
+    <p class="text-[var(--color-text-secondary)] mb-6">Top 25 metro areas by cost index</p>
+
+    <div class="flex flex-wrap gap-2 mb-6">
+      {tabs.map(t => (
+        <a
+          href={`/rankings?tab=${t.id}`}
+          class={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+            tab === t.id
+              ? 'bg-[var(--color-primary)] text-white'
+              : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]'
+          }`}
+        >{t.label}</a>
+      ))}
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+            <th class="pb-2 font-medium w-8">#</th>
+            <th class="pb-2 font-medium">Metro</th>
+            <th class="pb-2 font-medium text-right">Overall</th>
+            <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
+            <th class="pb-2 font-medium text-right hidden sm:table-cell">Services</th>
+            <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
+          </tr>
+        </thead>
+        <tbody>
+          {currentData.map((msa, i) => (
+            <tr class="border-b border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
+              <td class="py-3 text-[var(--color-text-secondary)]">{i + 1}</td>
+              <td class="py-3">
+                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline font-medium">{msa.name}</a>
+              </td>
+              <td class="py-3 text-right font-medium">{formatRpp(msa.rpp_all)}</td>
+              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_goods)}</td>
+              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_services)}</td>
+              <td class="py-3 text-right hidden md:table-cell">{formatRpp(msa.rpp_rents)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Base>

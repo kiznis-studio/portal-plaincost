@@ -1,0 +1,135 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getMsaBySlug, getMsaHistory, formatRpp, rppDiff, formatMoney } from '../../lib/db';
+
+const { slug } = Astro.params;
+if (!slug) return Astro.redirect('/404');
+
+const db = Astro.locals.runtime.env.DB;
+const msa = await getMsaBySlug(db, slug);
+if (!msa) return Astro.redirect('/404');
+
+const history = await getMsaHistory(db, msa.cbsa);
+
+const categories = [
+  { label: 'Overall', value: msa.rpp_all, key: 'rpp_all' },
+  { label: 'Goods', value: msa.rpp_goods, key: 'rpp_goods' },
+  { label: 'Services', value: msa.rpp_services, key: 'rpp_services' },
+  { label: 'Rents', value: msa.rpp_rents, key: 'rpp_rents' },
+];
+
+const maxRpp = Math.max(...categories.map(c => c.value ?? 0));
+const minRpp = Math.min(...categories.filter(c => c.value).map(c => c.value));
+const barMax = Math.max(maxRpp, 120);
+---
+
+<Base
+  title={`Cost of Living in ${msa.name}`}
+  description={`Cost of living in ${msa.name}: overall index ${formatRpp(msa.rpp_all)} (${rppDiff(msa.rpp_all)}). Compare goods, services, and rent prices vs national average.`}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Metros', href: '/metros' }, { name: msa.name }]}
+>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+      <a href="/metros" class="hover:text-[var(--color-primary)]">Metros</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-1">{msa.name}</h1>
+    <p class="text-[var(--color-text-secondary)] mb-6">CBSA: {msa.cbsa} &middot; Data year: {msa.year}</p>
+
+    <!-- Key Stats -->
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      {categories.map(cat => (
+        <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-4 text-center">
+          <div class={`text-2xl font-bold ${cat.value && cat.value >= 100 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}`}>
+            {formatRpp(cat.value)}
+          </div>
+          <div class="text-xs text-[var(--color-text-secondary)]">{cat.label}</div>
+        </div>
+      ))}
+    </div>
+
+    <!-- RPP Bars -->
+    <h2 class="text-lg font-semibold mb-4">Price Index vs National Average (100)</h2>
+    <div class="space-y-3 mb-8">
+      {categories.map(cat => (
+        <div>
+          <div class="flex justify-between text-sm mb-1">
+            <span>{cat.label}</span>
+            <span class="font-medium">{formatRpp(cat.value)}</span>
+          </div>
+          <div class="relative w-full h-6 bg-[var(--color-border)] rounded-full overflow-hidden">
+            <div
+              class="absolute left-0 top-0 h-full rounded-full"
+              style={`width: ${cat.value ? (cat.value / barMax * 100) : 0}%; background: var(--color-primary);`}
+            />
+            <div class="absolute top-0 h-full w-px bg-[var(--color-text)]" style={`left: ${100 / barMax * 100}%`} />
+          </div>
+        </div>
+      ))}
+      <p class="text-xs text-[var(--color-text-secondary)]">Vertical line = national average (100)</p>
+    </div>
+
+    <!-- Salary Equivalent -->
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-3">Salary Equivalent</h2>
+      <p class="text-sm text-[var(--color-text-secondary)] mb-4">
+        A $100,000 salary at the national average cost of living equals:
+      </p>
+      <div class="text-3xl font-bold text-[var(--color-primary)]">
+        ${msa.rpp_all ? Math.round(100000 * (msa.rpp_all / 100)).toLocaleString() : 'N/A'}
+      </div>
+      <p class="text-sm text-[var(--color-text-secondary)] mt-1">
+        in {msa.name} purchasing power
+      </p>
+      <p class="text-xs text-[var(--color-text-secondary)] mt-3">
+        Use the <a href="/calculator" class="text-[var(--color-primary)] hover:underline">salary calculator</a> for custom amounts.
+      </p>
+    </div>
+
+    <!-- History -->
+    {history.length > 1 && (
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">RPP History</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+                <th class="pb-2 font-medium">Year</th>
+                <th class="pb-2 font-medium text-right">Overall</th>
+                <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
+                <th class="pb-2 font-medium text-right hidden sm:table-cell">Services</th>
+                <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
+              </tr>
+            </thead>
+            <tbody>
+              {history.map(h => (
+                <tr class="border-b border-[var(--color-border)]">
+                  <td class="py-2 font-medium">{h.year}</td>
+                  <td class="py-2 text-right">{formatRpp(h.rpp_all)}</td>
+                  <td class="py-2 text-right hidden sm:table-cell">{formatRpp(h.rpp_goods)}</td>
+                  <td class="py-2 text-right hidden sm:table-cell">{formatRpp(h.rpp_services)}</td>
+                  <td class="py-2 text-right hidden md:table-cell">{formatRpp(h.rpp_rents)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <!-- Cross-links -->
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+      <h2 class="text-lg font-semibold mb-3">Related Data</h2>
+      <div class="flex flex-wrap gap-3 text-sm">
+        <a href={`https://plainrent.com/search?q=${encodeURIComponent(msa.name)}`} target="_blank" rel="noopener" class="text-[var(--color-primary)] hover:underline">Rent Prices</a>
+        <a href={`https://wagedex.com/search?q=${encodeURIComponent(msa.state_abbr)}`} target="_blank" rel="noopener" class="text-[var(--color-primary)] hover:underline">Salaries</a>
+        <a href={`https://plaincrime.com/search?q=${encodeURIComponent(msa.name.split(',')[0])}`} target="_blank" rel="noopener" class="text-[var(--color-primary)] hover:underline">Crime Data</a>
+        <a href={`https://plainzip.com/search?q=${encodeURIComponent(msa.name.split(',')[0])}`} target="_blank" rel="noopener" class="text-[var(--color-primary)] hover:underline">ZIP Codes</a>
+      </div>
+    </div>
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Source: Bureau of Economic Analysis, Regional Price Parities by Metropolitan Statistical Area. Index where national average = 100.
+    </p>
+  </section>
+</Base>
