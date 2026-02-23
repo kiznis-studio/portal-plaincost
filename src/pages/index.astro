@@ -5,6 +5,28 @@ import { getAllStates, getNationalStats } from '../lib/db';
 const db = Astro.locals.runtime.env.DB;
 const stats = await getNationalStats(db);
 const states = await getAllStates(db);
+
+const datasetSchema = {
+  "@context": "https://schema.org",
+  "@type": "Dataset",
+  "name": "U.S. Regional Price Parities and Cost of Living",
+  "description": "Bureau of Economic Analysis Regional Price Parity data for 387 metro areas and 51 states, measuring relative costs of goods, services, and rents.",
+  "url": "https://plaincost.com",
+  "keywords": ["cost of living", "regional price parities", "BEA RPP", "price index", "US cost comparison"],
+  "creator": {
+    "@type": "Organization",
+    "name": "PlainCost"
+  },
+  "spatialCoverage": "United States",
+  "temporalCoverage": "2022/2023",
+  "license": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "isAccessibleForFree": true,
+  "distribution": {
+    "@type": "DataDownload",
+    "encodingFormat": "text/html",
+    "contentUrl": "https://plaincost.com"
+  }
+};
 ---
 
 <Base
@@ -63,4 +85,6 @@ const states = await getAllStates(db);
       ))}
     </div>
   </section>
+
+  <script type="application/ld+json" set:html={JSON.stringify(datasetSchema)} />
 </Base>
