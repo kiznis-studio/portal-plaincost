@@ -1,5 +1,6 @@
 ---
 import Base from '../../layouts/Base.astro';
+import AdSlot from '../../components/ads/AdSlot.astro';
 import { getMsaBySlug, getMsaHistory, formatRpp, rppDiff, formatMoney } from '../../lib/db';
 
 const { slug } = Astro.params;
@@ -21,6 +22,55 @@ const categories = [
 const maxRpp = Math.max(...categories.map(c => c.value ?? 0));
 const minRpp = Math.min(...categories.filter(c => c.value).map(c => c.value));
 const barMax = Math.max(maxRpp, 120);
+
+// Narrative data
+const overallDiff = msa.rpp_all ? msa.rpp_all - 100 : null;
+const costLabel = overallDiff !== null ? (overallDiff > 0 ? 'more expensive' : overallDiff < 0 ? 'less expensive' : 'equal to') : null;
+const salaryEquiv = msa.rpp_all ? Math.round(100000 * (100 / msa.rpp_all)) : null;
+
+// FAQ items
+const metroName = msa.name;
+const faqItems: { q: string; a: string }[] = [];
+
+if (msa.rpp_all) {
+  faqItems.push({
+    q: `What is the cost of living in ${metroName}?`,
+    a: `${metroName} has a cost of living index of ${formatRpp(msa.rpp_all)}, meaning it is ${Math.abs(msa.rpp_all - 100).toFixed(1)}% ${msa.rpp_all >= 100 ? 'more' : 'less'} expensive than the national average. Goods are at ${formatRpp(msa.rpp_goods)}, services at ${formatRpp(msa.rpp_services)}, and rents at ${formatRpp(msa.rpp_rents)}.`
+  });
+}
+if (salaryEquiv) {
+  faqItems.push({
+    q: `What salary do I need in ${metroName} to match $100K nationally?`,
+    a: `To maintain the same purchasing power as a $100,000 salary at the national average, you would need approximately $${Math.round(100000 * (msa.rpp_all! / 100)).toLocaleString()} in ${metroName}. Conversely, $100K in ${metroName} has the purchasing power of $${salaryEquiv.toLocaleString()} nationally.`
+  });
+}
+if (msa.rpp_rents) {
+  faqItems.push({
+    q: `Are rents expensive in ${metroName}?`,
+    a: `Rents in ${metroName} are indexed at ${formatRpp(msa.rpp_rents)}, meaning they are ${Math.abs(msa.rpp_rents - 100).toFixed(1)}% ${msa.rpp_rents >= 100 ? 'above' : 'below'} the national average.`
+  });
+}
+if (history.length > 1) {
+  const oldest = history[history.length - 1];
+  const latest = history[0];
+  const change = latest.rpp_all && oldest.rpp_all ? (latest.rpp_all - oldest.rpp_all).toFixed(1) : null;
+  if (change) {
+    faqItems.push({
+      q: `Is the cost of living going up in ${metroName}?`,
+      a: `From ${oldest.year} to ${latest.year}, ${metroName}'s overall cost index changed by ${parseFloat(change) >= 0 ? '+' : ''}${change} points (from ${formatRpp(oldest.rpp_all)} to ${formatRpp(latest.rpp_all)}).`
+    });
+  }
+}
+
+const faqSchema = faqItems.length > 0 ? JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+}) : null;
 ---
 
 <Base
@@ -34,7 +84,17 @@ const barMax = Math.max(maxRpp, 120);
       <a href="/metros" class="hover:text-[var(--color-primary)]">Metros</a> /
     </div>
     <h1 class="text-2xl md:text-3xl font-bold mb-1">{msa.name}</h1>
-    <p class="text-[var(--color-text-secondary)] mb-6">CBSA: {msa.cbsa} &middot; Data year: {msa.year}</p>
+    <p class="text-[var(--color-text-secondary)] mb-3">CBSA: {msa.cbsa} &middot; Data year: {msa.year}</p>
+
+    {msa.rpp_all && (
+      <p class="text-[var(--color-text-secondary)] mb-6 leading-relaxed">
+        <strong>{metroName}</strong> has a cost of living index of <strong>{formatRpp(msa.rpp_all)}</strong>, meaning it's <strong>{Math.abs(msa.rpp_all - 100).toFixed(1)}% {costLabel}</strong> than the national average.
+        {msa.rpp_goods && <> Goods cost {msa.rpp_goods >= 100 ? `${(msa.rpp_goods - 100).toFixed(1)}% more` : `${(100 - msa.rpp_goods).toFixed(1)}% less`},</>}
+        {msa.rpp_services && <> services {msa.rpp_services >= 100 ? `${(msa.rpp_services - 100).toFixed(1)}% more` : `${(100 - msa.rpp_services).toFixed(1)}% less`},</>}
+        {msa.rpp_rents && <> and rents are {msa.rpp_rents >= 100 ? `${(msa.rpp_rents - 100).toFixed(1)}% above` : `${(100 - msa.rpp_rents).toFixed(1)}% below`} average.</>}
+        {salaryEquiv && <> A $100K national salary has the purchasing power of <strong>${salaryEquiv.toLocaleString()}</strong> here.</>}
+      </p>
+    )}
 
     <!-- Key Stats -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -86,6 +146,8 @@ const barMax = Math.max(maxRpp, 120);
       </p>
     </div>
 
+    <AdSlot slot="mid" />
+
     <!-- History -->
     {history.length > 1 && (
       <div class="mb-8">
@@ -128,8 +190,28 @@ const barMax = Math.max(maxRpp, 120);
       </div>
     </div>
 
+    {faqItems.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          {faqItems.map(f => (
+            <details class="group bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)]">
+              <summary class="flex items-center justify-between p-4 cursor-pointer font-medium text-[var(--color-text)]">
+                {f.q}
+                <span class="ml-2 text-[var(--color-text-secondary)] group-open:rotate-180 transition-transform">▼</span>
+              </summary>
+              <div class="px-4 pb-4 text-[var(--color-text-secondary)] text-sm">
+                {f.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
     <p class="text-xs text-[var(--color-text-secondary)] mt-6">
       Source: Bureau of Economic Analysis, Regional Price Parities by Metropolitan Statistical Area. Index where national average = 100.
     </p>
   </section>
+  {faqSchema && <script type="application/ld+json" set:html={faqSchema} />}
 </Base>
