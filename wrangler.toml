@@ -6,4 +6,4 @@ compatibility_flags = ["nodejs_compat"]
 [[d1_databases]]
 binding = "DB"
 database_name = "plaincost-db"
-database_id = "PLACEHOLDER"
+database_id = "5885cb6f-261a-4008-a6f4-6b9c9d782c61"
