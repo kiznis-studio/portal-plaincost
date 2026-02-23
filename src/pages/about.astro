@@ -1,0 +1,52 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="About PlainCost"
+  description="Learn about PlainCost's methodology, data sources, and mission to make cost of living data transparent and accessible."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'About' }]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-8">About PlainCost</h1>
+    <div class="prose max-w-none space-y-6 text-[var(--color-text-secondary)]">
+      <p class="text-lg">PlainCost makes cost of living data transparent and accessible for everyone. Compare real costs across metros and states using official government data.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Data Source</h2>
+      <p>All data comes from the <strong>U.S. Bureau of Economic Analysis (BEA) Regional Price Parities (RPP)</strong>. RPPs measure the differences in price levels across states and metropolitan areas for a given year and are expressed as a percentage of the overall national price level (100 = national average).</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">What Are Regional Price Parities?</h2>
+      <p>Regional Price Parities (RPPs) measure how much prices differ across regions compared to the national average. An RPP of 110 means prices are 10% above the national average; an RPP of 90 means 10% below.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Categories</h2>
+      <ul class="list-disc pl-6 space-y-1">
+        <li><strong>All Items</strong> — Overall cost of living index</li>
+        <li><strong>Goods</strong> — Food, clothing, transportation, electronics</li>
+        <li><strong>Services</strong> — Healthcare, education, utilities (excluding rents)</li>
+        <li><strong>Rents</strong> — Housing rental costs</li>
+      </ul>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Coverage</h2>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>384 metropolitan statistical areas (MSAs)</li>
+        <li>51 states and territories</li>
+        <li>Historical data from 2008 to present</li>
+        <li>4 price categories per geography</li>
+      </ul>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Salary Equivalent Calculator</h2>
+      <p>Our calculator uses RPP indices to compute salary equivalents. If you earn $X in City A (RPP=A), the equivalent salary in City B (RPP=B) is: $X × (B/A). This provides a reasonable estimate, though individual costs vary.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Important Notes</h2>
+      <ul class="list-disc pl-6 space-y-1">
+        <li>RPPs are annual averages — individual costs may vary seasonally</li>
+        <li>RPPs compare price levels, not cost of living (which also includes income)</li>
+        <li>PlainCost is not affiliated with the Bureau of Economic Analysis</li>
+      </ul>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Contact</h2>
+      <p>Questions or feedback? Reach us at hello@plaincost.com.</p>
+    </div>
+  </div>
+</Base>

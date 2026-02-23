@@ -1,0 +1,25 @@
+# PlainCost — Cost of Living Data
+
+> PlainCost provides free access to cost of living data across the United States, sourced from the U.S. Bureau of Economic Analysis Regional Price Parities (RPP).
+
+## Data Coverage
+- Regional Price Parities for 384 metropolitan areas and 51 states
+- Categories: overall, goods, services, rents
+- Historical data (2008-2024)
+- Salary equivalent calculator
+- Side-by-side metro comparisons
+
+## Data Source
+U.S. Bureau of Economic Analysis, Regional Price Parities by State and Metro Area
+https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area
+
+## Pages
+- Homepage: https://plaincost.com/
+- Metro directory: https://plaincost.com/metros
+- Metro profiles: https://plaincost.com/metro/{slug}
+- State directory: https://plaincost.com/states
+- State profiles: https://plaincost.com/state/{slug}
+- Compare: https://plaincost.com/compare
+- Calculator: https://plaincost.com/calculator
+- Rankings: https://plaincost.com/rankings
+- Search: https://plaincost.com/search

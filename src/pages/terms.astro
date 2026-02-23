@@ -1,0 +1,38 @@
+---
+export const prerender = true;
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Terms of Use"
+  description="PlainCost terms of use — guidelines for using our cost of living data."
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Terms of Use' }]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-12">
+    <h1 class="text-3xl font-bold mb-8">Terms of Use</h1>
+    <div class="prose max-w-none space-y-6 text-[var(--color-text-secondary)]">
+      <p><strong>Last updated:</strong> February 2026</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Acceptance of Terms</h2>
+      <p>By accessing PlainCost, you agree to these terms of use. If you do not agree, please do not use the site.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Data Accuracy</h2>
+      <p>PlainCost presents data from the U.S. Bureau of Economic Analysis Regional Price Parities. While we strive for accuracy, we cannot guarantee the completeness or timeliness of all information. Regional Price Parities are published annually and reflect historical data.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Not Financial Advice</h2>
+      <p>The information on PlainCost is provided for general informational purposes only. It does not constitute financial, relocation, or cost-of-living advice. Actual costs in your area may differ from regional averages.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Disclaimer</h2>
+      <p>PlainCost is not affiliated with the Bureau of Economic Analysis or any government agency. We are an independent site that transforms publicly available government data into an accessible format.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Intellectual Property</h2>
+      <p>The underlying data is public domain (U.S. government work). The site design, code, and presentation are copyrighted. You may reference data with attribution but may not reproduce the site's design or functionality.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Limitation of Liability</h2>
+      <p>PlainCost is provided "as is" without warranties of any kind. We are not liable for any decisions made based on information provided on this site.</p>
+
+      <h2 class="text-xl font-semibold text-[var(--color-text)]">Contact</h2>
+      <p>For questions about these terms, contact us at legal@plaincost.com.</p>
+    </div>
+  </div>
+</Base>
