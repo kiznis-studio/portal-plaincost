@@ -1,28 +1,17 @@
 ---
+export const prerender = false;
 import Base from '../../layouts/Base.astro';
 import { getMostExpensiveMsas, getLeastExpensiveMsas, getHighestRentMsas, formatRpp } from '../../lib/db';
 
 const db = Astro.locals.runtime.env.DB;
-const tab = Astro.url.searchParams.get('tab') || 'expensive';
-
-const mostExpensive = await getMostExpensiveMsas(db, 25);
-const leastExpensive = await getLeastExpensiveMsas(db, 25);
-const highestRent = await getHighestRentMsas(db, 25);
-
-const tabs = [
-  { id: 'expensive', label: 'Most Expensive' },
-  { id: 'cheapest', label: 'Cheapest' },
-  { id: 'rents', label: 'Highest Rents' },
-];
-
-const currentData = tab === 'cheapest' ? leastExpensive
-  : tab === 'rents' ? highestRent
-  : mostExpensive;
+const topExpensive = await getMostExpensiveMsas(db, 5);
+const topCheapest = await getLeastExpensiveMsas(db, 5);
+const topRents = await getHighestRentMsas(db, 5);
 ---
 
 <Base
-  title="Cost of Living Rankings"
-  description="Rankings of U.S. metros by cost of living, goods prices, and rent costs. Compare the most and least expensive places to live."
+  title="Cost of Living Rankings — Most Expensive & Cheapest Cities in America"
+  description="Rankings of U.S. metros by cost of living, goods prices, and rent costs. Compare the most and least expensive places to live in America."
   breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Rankings' }]}
 >
   <section class="max-w-6xl mx-auto px-4 py-8">
@@ -30,48 +19,91 @@ const currentData = tab === 'cheapest' ? leastExpensive
       <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
     </div>
     <h1 class="text-2xl md:text-3xl font-bold mb-2">Cost of Living Rankings</h1>
-    <p class="text-[var(--color-text-secondary)] mb-6">Top 25 metro areas by cost index</p>
+    <p class="text-[var(--color-text-secondary)] mb-8">Explore U.S. metro areas ranked by cost of living, affordability, and rent prices using BEA Regional Price Parities</p>
 
-    <div class="flex flex-wrap gap-2 mb-6">
-      {tabs.map(t => (
-        <a
-          href={`/rankings?tab=${t.id}`}
-          class={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            tab === t.id
-              ? 'bg-[var(--color-primary)] text-white'
-              : 'bg-[var(--color-surface)] border border-[var(--color-border)] text-[var(--color-text)] hover:border-[var(--color-primary)]'
-          }`}
-        >{t.label}</a>
-      ))}
-    </div>
-
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
-            <th class="pb-2 font-medium w-8">#</th>
-            <th class="pb-2 font-medium">Metro</th>
-            <th class="pb-2 font-medium text-right">Overall</th>
-            <th class="pb-2 font-medium text-right hidden sm:table-cell">Goods</th>
-            <th class="pb-2 font-medium text-right hidden sm:table-cell">Services</th>
-            <th class="pb-2 font-medium text-right hidden md:table-cell">Rents</th>
-          </tr>
-        </thead>
-        <tbody>
-          {currentData.map((msa, i) => (
-            <tr class="border-b border-[var(--color-border)] hover:bg-[var(--color-surface)] transition-colors">
-              <td class="py-3 text-[var(--color-text-secondary)]">{i + 1}</td>
-              <td class="py-3">
-                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline font-medium">{msa.name}</a>
-              </td>
-              <td class="py-3 text-right font-medium">{formatRpp(msa.rpp_all)}</td>
-              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_goods)}</td>
-              <td class="py-3 text-right hidden sm:table-cell">{formatRpp(msa.rpp_services)}</td>
-              <td class="py-3 text-right hidden md:table-cell">{formatRpp(msa.rpp_rents)}</td>
-            </tr>
+    <div class="grid gap-6 md:grid-cols-3">
+      <!-- Most Expensive Card -->
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">📈</span>
+          <h2 class="text-lg font-semibold">Most Expensive</h2>
+        </div>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Top metros with the highest overall cost of living index</p>
+        <ol class="space-y-2 mb-4">
+          {topExpensive.map((msa, i) => (
+            <li class="flex items-center justify-between text-sm">
+              <span>
+                <span class="text-[var(--color-text-secondary)] mr-1">{i + 1}.</span>
+                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline">{msa.name.split(',')[0]}</a>
+              </span>
+              <span class="font-medium text-amber-600 dark:text-amber-400">{formatRpp(msa.rpp_all)}</span>
+            </li>
           ))}
-        </tbody>
-      </table>
+        </ol>
+        <a href="/rankings/most-expensive" class="inline-flex items-center text-sm font-medium text-[var(--color-primary)] hover:underline">
+          View all 100 metros →
+        </a>
+      </div>
+
+      <!-- Cheapest Card -->
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">💰</span>
+          <h2 class="text-lg font-semibold">Cheapest Cities</h2>
+        </div>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Most affordable metro areas by cost of living</p>
+        <ol class="space-y-2 mb-4">
+          {topCheapest.map((msa, i) => (
+            <li class="flex items-center justify-between text-sm">
+              <span>
+                <span class="text-[var(--color-text-secondary)] mr-1">{i + 1}.</span>
+                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline">{msa.name.split(',')[0]}</a>
+              </span>
+              <span class="font-medium text-teal-600 dark:text-teal-400">{formatRpp(msa.rpp_all)}</span>
+            </li>
+          ))}
+        </ol>
+        <a href="/rankings/cheapest" class="inline-flex items-center text-sm font-medium text-[var(--color-primary)] hover:underline">
+          View all 100 metros →
+        </a>
+      </div>
+
+      <!-- Highest Rents Card -->
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-2xl">🏠</span>
+          <h2 class="text-lg font-semibold">Highest Rents</h2>
+        </div>
+        <p class="text-sm text-[var(--color-text-secondary)] mb-4">Metros with the highest rent price index</p>
+        <ol class="space-y-2 mb-4">
+          {topRents.map((msa, i) => (
+            <li class="flex items-center justify-between text-sm">
+              <span>
+                <span class="text-[var(--color-text-secondary)] mr-1">{i + 1}.</span>
+                <a href={`/metro/${msa.slug}`} class="text-[var(--color-primary)] hover:underline">{msa.name.split(',')[0]}</a>
+              </span>
+              <span class="font-medium text-amber-600 dark:text-amber-400">{formatRpp(msa.rpp_rents)}</span>
+            </li>
+          ))}
+        </ol>
+        <a href="/rankings/highest-rents" class="inline-flex items-center text-sm font-medium text-[var(--color-primary)] hover:underline">
+          View all 100 metros →
+        </a>
+      </div>
     </div>
+
+    <div class="mt-8 bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6">
+      <h2 class="text-lg font-semibold mb-3">About Cost of Living Rankings</h2>
+      <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed mb-3">
+        These rankings use the Bureau of Economic Analysis (BEA) Regional Price Parities (RPPs) to compare the cost of living across U.S. metropolitan areas. The RPP index measures the relative price levels of goods, services, and rents, with the national average set at 100.
+      </p>
+      <p class="text-sm text-[var(--color-text-secondary)] leading-relaxed">
+        A metro with an RPP of 110 is 10% more expensive than the national average, while one at 90 is 10% cheaper. Use the <a href="/calculator" class="text-[var(--color-primary)] hover:underline">salary calculator</a> to see what your income is worth in different cities, or <a href="/compare" class="text-[var(--color-primary)] hover:underline">compare two metros</a> side by side.
+      </p>
+    </div>
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Source: Bureau of Economic Analysis, Regional Price Parities by Metropolitan Statistical Area. Index where national average = 100.
+    </p>
   </section>
 </Base>

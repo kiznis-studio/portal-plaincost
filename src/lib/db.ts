@@ -144,6 +144,22 @@ export async function getHighestRentMsas(db: D1Database, limit = 25): Promise<Ms
   return results;
 }
 
+// --- State-Scoped Rankings ---
+
+export async function getMostExpensiveMsasByState(db: D1Database, stateAbbr: string, limit = 25): Promise<Msa[]> {
+  const { results } = await db.prepare(
+    'SELECT * FROM msas WHERE state_abbr = ? ORDER BY rpp_all DESC LIMIT ?'
+  ).bind(stateAbbr, limit).all<Msa>();
+  return results;
+}
+
+export async function getLeastExpensiveMsasByState(db: D1Database, stateAbbr: string, limit = 25): Promise<Msa[]> {
+  const { results } = await db.prepare(
+    'SELECT * FROM msas WHERE state_abbr = ? ORDER BY rpp_all ASC LIMIT ?'
+  ).bind(stateAbbr, limit).all<Msa>();
+  return results;
+}
+
 // --- Search ---
 
 export async function searchMsas(db: D1Database, query: string, limit = 20): Promise<Msa[]> {
