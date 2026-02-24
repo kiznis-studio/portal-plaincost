@@ -86,6 +86,35 @@ const datasetSchema = {
     </div>
   </section>
 
+  <section class="bg-[var(--color-surface)] border-t border-[var(--color-border)]">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-16">
+      <h2 class="text-2xl font-bold text-[var(--color-text)] mb-3">Learn & Explore</h2>
+      <p class="text-[var(--color-text-secondary)] mb-8 max-w-2xl">
+        Go beyond the data with our in-depth guides on cost of living, salary negotiation, and making the most of RPP data.
+      </p>
+      <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <a href="/guides/cheapest-metros-2026/" class="block p-5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl hover:border-[var(--color-primary)] transition-colors">
+          <div class="text-xs font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">Affordability</div>
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">Cheapest Metros to Live in 2026</h3>
+          <p class="text-sm text-[var(--color-text-secondary)]">The most affordable metro areas in the US ranked by BEA Regional Price Parities, including housing and services.</p>
+        </a>
+        <a href="/guides/salary-negotiation-with-rpp/" class="block p-5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl hover:border-[var(--color-primary)] transition-colors">
+          <div class="text-xs font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">Salary</div>
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">How to Use RPP Data in Salary Negotiations</h3>
+          <p class="text-sm text-[var(--color-text-secondary)]">Use Regional Price Parity data to make a data-driven case for your salary in relocation or remote work discussions.</p>
+        </a>
+        <a href="/guides/remote-work-arbitrage/" class="block p-5 bg-[var(--color-bg)] border border-[var(--color-border)] rounded-xl hover:border-[var(--color-primary)] transition-colors">
+          <div class="text-xs font-medium text-[var(--color-primary)] uppercase tracking-wide mb-2">Remote Work</div>
+          <h3 class="font-semibold text-[var(--color-text)] mb-1">Remote Work Arbitrage: Keep Your Salary, Cut Your Costs</h3>
+          <p class="text-sm text-[var(--color-text-secondary)]">How to use cost of living data to find metros where your remote income goes furthest.</p>
+        </a>
+      </div>
+      <div class="mt-6 text-center">
+        <a href="/guides/" class="text-[var(--color-primary)] hover:underline font-medium">View all guides &rarr;</a>
+      </div>
+    </div>
+  </section>
+
   <script type="application/ld+json" set:html={JSON.stringify(datasetSchema)} />
   <script type="application/ld+json" set:html={JSON.stringify({
     '@context': 'https://schema.org',
