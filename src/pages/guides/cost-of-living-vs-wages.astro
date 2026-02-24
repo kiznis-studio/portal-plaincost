@@ -1,0 +1,199 @@
+---
+export const prerender = true;
+import Base from '../../layouts/Base.astro';
+
+const title = 'Cost of Living vs Wages: Where Your Dollar Goes Furthest';
+const description = 'Find out which U.S. metros offer the best real wages after adjusting for local prices — and which leave residents financially squeezed. Based on BEA Regional Price Parities and real personal income data.';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is real personal income?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Real personal income is nominal (dollar-amount) income adjusted for local price levels using Regional Price Parities. The BEA publishes real personal income by state and metro area, allowing apples-to-apples comparisons of how much income residents can actually spend after accounting for what things cost locally."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which metros have wages that outpace costs?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Metros where wages substantially outpace costs tend to be mid-sized cities with specialized high-wage industries — oil and gas metros in Texas, university and research towns, defense hubs, and some Midwest manufacturing cities. These places have above-average nominal wages relative to their modest price levels."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why don't wages and prices always match up?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Wages and prices tend to track each other over long periods, but they diverge for structural reasons. Housing prices can spike faster than wages (as in post-2015 Denver or coastal markets). Industry mix matters: a metro with lots of high-wage professionals but moderate service prices has a good cost-wage ratio; a tourist town with lots of low-wage hospitality jobs but expensive housing does not."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How should I use cost-adjusted wage data for career decisions?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "When evaluating job offers in different cities, always convert nominal salaries to real purchasing power using RPP. Then compare against local living costs (housing, childcare, transportation) to estimate how much discretionary income you'd have. A higher nominal salary is not always better — the real after-cost surplus is what matters for quality of life and wealth accumulation."
+      }
+    }
+  ]
+};
+---
+
+<Base title={title} description={description}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Guides', href: '/guides' }, { name: 'Cost of Living vs Wages' }]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Cost of Living vs Wages: Where Your Dollar Goes Furthest</h1>
+      <p class="text-lg text-gray-500 dark:text-gray-400 mt-2">Beyond sticker prices — a look at where U.S. metro residents have the most real purchasing power after adjusting income for what things actually cost.</p>
+    </header>
+
+    <div class="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl p-6 mb-10">
+      <div class="text-sm font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 mb-2">Key Takeaway</div>
+      <p class="text-gray-700 dark:text-gray-300">Nominal wages tell you what people earn. Regional Price Parities tell you what those wages buy. The BEA combines these into a "real personal income" measure that shows which states and metros offer the most actual purchasing power. The highest real income metros are not always the highest nominal income metros — some mid-tier cities with specialized industries deliver exceptional real wages because costs remain modest even as wages have risen.</p>
+    </div>
+
+    <div class="prose prose-gray dark:prose-invert max-w-none">
+
+      <h2>Why Nominal Income Isn't the Whole Story</h2>
+      <p>
+        State-level income comparisons typically use nominal figures — average or median household income in dollar terms. These numbers are useful for broad comparisons, but they miss the critical dimension of what those dollars purchase in each location.
+      </p>
+      <p>
+        Connecticut has one of the highest median household incomes in the country in nominal terms. But Connecticut also has high costs, particularly in Fairfield County. Mississippi has among the lowest nominal incomes — but also some of the lowest prices. Once you adjust for local price levels, the gap in real living standards narrows considerably.
+      </p>
+      <p>
+        The Bureau of Economic Analysis directly addresses this through its Real Personal Income by Metro Area data. By dividing nominal personal income by the local Regional Price Parity (RPP), the BEA produces a metric that represents how much residents can actually consume — their effective purchasing power — rather than just the dollar number on their paycheck.
+      </p>
+      <p>
+        This matters for three types of decisions: where to live, where to work, and how to compare your compensation to peers across different markets.
+      </p>
+
+      <h2>Adjusted Real Personal Income by Metro</h2>
+      <p>
+        BEA data shows that state-level real personal income per capita rankings look quite different from nominal rankings. Some patterns consistently emerge:
+      </p>
+      <p>
+        <strong>High nominal income, lower real income.</strong> Hawaii, California, Connecticut, New Jersey, and Massachusetts — all high nominal income states — see their rankings fall substantially when adjusted for prices. The RPPs in these states (typically 112–130+) consume much of the nominal income premium. A Massachusetts resident earning the state median has significantly less real purchasing power than their paycheck suggests compared to a resident of, say, Indiana.
+      </p>
+      <p>
+        <strong>Moderate nominal income, strong real income.</strong> States like Indiana, Iowa, Missouri, Wisconsin, and Nebraska rank higher in real income than nominal income. Their moderate nominal incomes are stretched further by price levels well below the national average.
+      </p>
+      <p>
+        <strong>Texas stands out.</strong> Texas has high nominal income in its major metros (Austin, Houston, Dallas) combined with no state income tax and RPPs that, while rising, remain below coastal peers. This combination produces strong real personal income figures across much of the state.
+      </p>
+      <p>
+        At the metro level, the BEA data reveals specific cities where the cost-wage relationship is particularly favorable. Explore the <a href="/metros/">metro RPP data</a> and <a href="/states/">state-level data</a> on PlainCost to see current figures for any area.
+      </p>
+
+      <h2>Metros Where Wages Outpace Costs</h2>
+      <p>
+        Several types of metro areas consistently deliver strong real wages relative to their price levels:
+      </p>
+      <p>
+        <strong>Oil and gas metros (Texas, Oklahoma, North Dakota).</strong> Midland-Odessa, TX; Casper, WY; Bismarck, ND; Oklahoma City, OK all benefit from energy industry wages that are elevated relative to overall local price levels. These are mid-sized metros where wages in extraction industries pull up average incomes significantly, while service prices remain modest. The downside: wage levels fluctuate with commodity prices, so real income can swing with oil market cycles.
+      </p>
+      <p>
+        <strong>Defense and government hubs.</strong> Huntsville, AL; Colorado Springs, CO; Fayetteville, NC; Killeen-Temple, TX all combine federal government and defense contractor employment (which tends to pay well and includes benefits) with below-national-average costs. The result is strong real income despite modest nominal wages by coastal standards.
+      </p>
+      <p>
+        <strong>Research university cities (mid-tier).</strong> Cities like Madison, WI; Columbia, MO; Athens, GA; Champaign-Urbana, IL have university employment providing stable, above-average wages for a significant share of the workforce, while overall price levels remain moderate. University hospitals, research labs, and technology transfer offices further diversify the high-wage employment base.
+      </p>
+      <p>
+        <strong>Midwest manufacturing hubs.</strong> Some Midwest manufacturing cities retain well-paying union or unionized-wage manufacturing employment in sectors like auto parts, heavy equipment, and specialty chemicals. Cities like Decatur, IL; Peoria, IL; Fort Wayne, IN; Green Bay, WI offer household incomes that hold up reasonably well against their low price levels.
+      </p>
+
+      <h2>Metros Where Costs Squeeze Residents Most</h2>
+      <p>
+        The inverse situation — where costs outpace wages — is most common in metros that have absorbed rapid price appreciation without proportional wage growth, or where the industry mix skews toward lower-wage employment:
+      </p>
+      <p>
+        <strong>Tourist and resort economies.</strong> Cities like Miami, FL; Las Vegas, NV; Orlando, FL; and Myrtle Beach, SC have high concentrations of hospitality and tourism employment, which is lower-wage. Prices in these markets can be elevated (especially housing, driven by investor demand and retiree wealth), leaving service workers in a poor cost-wage position. The median resident earns much less than the RPP would suggest is comfortable.
+      </p>
+      <p>
+        <strong>Post-boom metros with legacy costs.</strong> Denver, CO and Boise, ID have experienced rapid cost appreciation driven by migration from more expensive cities. Local wages have grown, but not always fast enough to keep pace with housing inflation. Long-term residents and lower-income workers who didn't benefit from real estate appreciation often face genuine purchasing power pressure.
+      </p>
+      <p>
+        <strong>Small coastal cities with spillover demand.</strong> Cities adjacent to mega-expensive metros — think Santa Cruz near San Jose, or Providence near Boston — often absorb high-income earners from the bigger city who commute, driving up housing prices to near-metro levels without delivering metro-level wages to existing residents.
+      </p>
+      <p>
+        <strong>Appalachian and rural-adjacent metros.</strong> Some small metros in Appalachia and the rural South have low prices but also very low nominal wages, with limited high-wage employer diversity. Price-to-wage ratios can be adequate but provide little upward mobility.
+      </p>
+
+      <h2>Industry Concentration Effects on Local Wages</h2>
+      <p>
+        A metro's industry mix is the primary driver of its wage level. This affects the cost-wage relationship in important ways:
+      </p>
+      <p>
+        <strong>The tech premium.</strong> Software engineers, data scientists, and tech product managers earn substantially more in San Francisco, Seattle, or New York than in most other metros for the same work. This tech wage premium partly justifies the high cost premium in those cities for tech workers. For everyone else — teachers, nurses, plumbers, restaurant workers — the same cost premium applies without the same wage premium, leading to acute affordability stress among non-tech workers.
+      </p>
+      <p>
+        <strong>Healthcare as a wage anchor.</strong> Healthcare is one of the most geographically sticky high-wage industries. Hospitals and medical centers exist everywhere, and healthcare workers (nurses, physicians, administrators, allied health) earn competitive wages in most metro areas. Cities with major medical centers — Rochester, MN (Mayo Clinic); Houston, TX; Cleveland, OH — get the wage-anchoring effect of healthcare at scale.
+      </p>
+      <p>
+        <strong>Finance geography is narrowing.</strong> Financial services employment used to be concentrated almost exclusively in New York, Chicago, and San Francisco. Remote work and digital operations have spread finance employment somewhat, but headquarters and senior roles remain concentrated in major financial centers. The finance wage premium still accrues primarily to a small set of high-cost metros.
+      </p>
+      <p>
+        <strong>Government employment stabilizes.</strong> Federal, state, and local government employment provides stable, benefits-rich wages in most metros. Areas with high concentrations of government employment relative to population — state capitals, county seats, military communities — tend to have more stable cost-wage ratios because government wages adjust on predictable schedules rather than spiking with private sector cycles.
+      </p>
+
+      <h2>Using Cost-Adjusted Data for Career and Relocation Decisions</h2>
+      <p>
+        The practical application of this analysis is improving the quality of major life decisions. Here's a framework:
+      </p>
+      <p>
+        <strong>Evaluating a job offer in a new city.</strong> Step one: find the RPP for the new city on <a href="/metros/">PlainCost</a>. Step two: convert your new salary to real purchasing power. Step three: estimate your actual major expenses in the new city (housing, transportation, childcare if applicable) and calculate what your monthly surplus would be. Compare this to your current situation. A higher nominal salary that leaves less surplus after local expenses is not an improvement.
+      </p>
+      <p>
+        <strong>Career trajectory planning.</strong> If your field has a geographic wage premium, the calculation changes over time. A 25-year-old who spends 5–10 years in San Francisco or New York accumulating career capital and savings at a high nominal wage — then relocates to a lower-cost metro — may end up with more wealth than someone who chose the lower-cost metro from the start. The calculus depends on the magnitude of the wage premium, your savings rate, and how much career capital is actually geographic.
+      </p>
+      <p>
+        <strong>Retirement location planning.</strong> Cost-adjusted analysis is especially important for retirement, when income is fixed. Retirees in expensive metros live on the same Social Security or investment withdrawal as retirees in inexpensive metros — but the latter purchase substantially more with it. A $50,000 annual retirement income in a metro with RPP 88 has the purchasing power of $56,800 at national-average prices; in a metro with RPP 118, it's equivalent to only $42,370. This difference compounds significantly over a multi-decade retirement.
+      </p>
+      <p>
+        <strong>Housing investment decisions.</strong> Markets where wages are growing faster than prices tend to sustain housing demand — residents can afford to buy or rent at current levels. Markets where prices have outrun wages face demand erosion risk. RPP trends over time, combined with wage growth data, can inform where housing markets are fundamentally well-supported versus where they depend on continued population inflows to sustain prices.
+      </p>
+
+      <h2>Frequently Asked Questions</h2>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">What is real personal income?</summary>
+        <p>Real personal income is nominal (dollar-amount) income adjusted for local price levels using Regional Price Parities. The BEA publishes real personal income by state and metro area, allowing apples-to-apples comparisons of how much income residents can actually spend after accounting for what things cost locally.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">Which metros have wages that outpace costs?</summary>
+        <p>Metros where wages substantially outpace costs tend to be mid-sized cities with specialized high-wage industries — oil and gas metros in Texas, university and research towns, defense hubs, and some Midwest manufacturing cities. These places have above-average nominal wages relative to their modest price levels.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">Why don't wages and prices always match up?</summary>
+        <p>Wages and prices tend to track each other over long periods, but they diverge for structural reasons. Housing prices can spike faster than wages (as in post-2015 Denver or coastal markets). Industry mix matters: a metro with lots of high-wage professionals but moderate service prices has a good cost-wage ratio; a tourist town with lots of low-wage hospitality jobs but expensive housing does not.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">How should I use cost-adjusted wage data for career decisions?</summary>
+        <p>When evaluating job offers in different cities, always convert nominal salaries to real purchasing power using RPP. Then compare against local living costs (housing, childcare, transportation) to estimate how much discretionary income you'd have. A higher nominal salary is not always better — the real after-cost surplus is what matters for quality of life and wealth accumulation.</p>
+      </details>
+
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        <strong>Sources:</strong> U.S. Bureau of Economic Analysis, <a href="https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area" class="text-orange-600 dark:text-orange-400 hover:underline" target="_blank" rel="noopener noreferrer">Regional Price Parities by State and Metro Area</a>; BEA, <a href="https://www.bea.gov/data/income-saving/real-personal-income-states-and-metropolitan-areas" class="text-orange-600 dark:text-orange-400 hover:underline" target="_blank" rel="noopener noreferrer">Real Personal Income for States and Metropolitan Areas</a>; Bureau of Labor Statistics, Occupational Employment and Wage Statistics.
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+        <strong>Last updated:</strong> February 2026
+      </p>
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</Base>

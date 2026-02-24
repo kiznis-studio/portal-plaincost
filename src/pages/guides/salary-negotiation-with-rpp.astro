@@ -1,0 +1,198 @@
+---
+export const prerender = true;
+import Base from '../../layouts/Base.astro';
+
+const title = 'How to Negotiate Salary Using Cost of Living Data';
+const description = 'Use BEA Regional Price Parities to calculate your real purchasing power, benchmark compensation across markets, and make a data-backed case in salary negotiations — whether relocating or working remotely.';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the difference between real wages and nominal wages?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Nominal wages are the dollar amount on your paycheck. Real wages adjust for purchasing power — what those dollars can actually buy in your local market. A $90,000 salary in a city with RPP 85 has greater real purchasing power than a $100,000 salary in a city with RPP 110."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate purchasing power using RPP?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Divide your nominal salary by the metro's RPP and multiply by 100. For example: $85,000 ÷ 92 × 100 = $92,391 in national-average purchasing power. This lets you compare offers across different cities on a true apples-to-apples basis."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Should remote workers accept lower salaries for living in cheaper areas?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "This depends on your employment agreement and the company's compensation philosophy. Some companies practice location-based pay; others pay uniformly by role. If you're asked to accept a pay cut for relocating, RPP data gives you objective grounds to negotiate — your productivity does not change with your zip code."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What data sources should I cite in a salary negotiation?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The most credible sources are: BEA Regional Price Parities (cost of living), BLS Occupational Employment and Wage Statistics (local wages by occupation), and the Census Bureau's American Community Survey (median household income). These are official government data that cannot be dismissed as biased advocacy."
+      }
+    }
+  ]
+};
+---
+
+<Base title={title} description={description}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Guides', href: '/guides' }, { name: 'Salary Negotiation with RPP' }]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">How to Negotiate Salary Using Cost of Living Data</h1>
+      <p class="text-lg text-gray-500 dark:text-gray-400 mt-2">Turn BEA Regional Price Parities into a compelling, data-backed case for the compensation you actually deserve.</p>
+    </header>
+
+    <div class="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl p-6 mb-10">
+      <div class="text-sm font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 mb-2">Key Takeaway</div>
+      <p class="text-gray-700 dark:text-gray-300">Your purchasing power depends on both your salary and where you live. The BEA's Regional Price Parities let you convert any salary into a single comparable number regardless of location. Use the formula: <strong>Real purchasing power = (Nominal salary ÷ Local RPP) × 100</strong>. This converts your salary into "national-average dollars" — the most credible way to present location-adjusted compensation in negotiations.</p>
+    </div>
+
+    <div class="prose prose-gray dark:prose-invert max-w-none">
+
+      <h2>Real Wages vs. Nominal Wages</h2>
+      <p>
+        Most salary discussions focus on nominal wages — the number on your offer letter. But what that number can actually buy depends entirely on where you spend it. A $90,000 salary in Knoxville, Tennessee has more purchasing power than a $110,000 salary in Boston, Massachusetts, even though the nominal difference looks substantial in Boston's favor.
+      </p>
+      <p>
+        This is the distinction between nominal wages (the dollar amount) and real wages (purchasing power after adjusting for local prices). Economists and policymakers use real wages to compare living standards across geographies and time. You should use them in salary negotiations.
+      </p>
+      <p>
+        The BEA's Regional Price Parities (RPPs) are the best available tool for this conversion. They measure the price level in a metropolitan area relative to the national average (set to 100), covering all goods, services, and housing. An RPP of 88 means the local price level is 12% below the national average; an RPP of 115 means 15% above average.
+      </p>
+
+      <h2>The RPP Purchasing Power Formula</h2>
+      <p>
+        Converting a nominal salary to real purchasing power is simple:
+      </p>
+      <p>
+        <strong>Real purchasing power = (Nominal salary ÷ Local RPP) × 100</strong>
+      </p>
+      <p>
+        This gives you what your salary is worth in "national-average dollars" — a common currency that lets you compare offers in different cities fairly. Examples:
+      </p>
+      <ul>
+        <li>$85,000 in Memphis, TN (RPP ~86): $85,000 ÷ 86 × 100 = <strong>$98,837 in real terms</strong></li>
+        <li>$105,000 in Washington, DC (RPP ~116): $105,000 ÷ 116 × 100 = <strong>$90,517 in real terms</strong></li>
+        <li>$75,000 in Amarillo, TX (RPP ~85): $75,000 ÷ 85 × 100 = <strong>$88,235 in real terms</strong></li>
+        <li>$120,000 in San Jose, CA (RPP ~131): $120,000 ÷ 131 × 100 = <strong>$91,603 in real terms</strong></li>
+      </ul>
+      <p>
+        The Washington and San Jose numbers illustrate a common trap: high nominal salaries in expensive metros often translate to lower real purchasing power than moderate salaries in affordable cities. Use the <a href="/calculator">PlainCost salary calculator</a> to run these conversions for any metro automatically.
+      </p>
+
+      <h2>Using RPP Data in Salary Negotiations</h2>
+      <p>
+        Bringing data to a salary negotiation reframes the conversation from opinion to evidence. Here's how to present RPP data effectively:
+      </p>
+      <p>
+        <strong>Scenario 1: You're moving from a cheaper market to an expensive one.</strong> Calculate your current real purchasing power and show what nominal salary you'd need in the new city to maintain the same living standard. If you currently earn $80,000 in a metro with RPP 88 (real value: $90,909), and the new city has RPP 118, you'd need $80,000 × (118 ÷ 88) = $107,273 just to break even. This is a defensible, data-based counterpoint to an offer that ignores location.
+      </p>
+      <p>
+        <strong>Scenario 2: You're asking for a raise and have received competing offers from other markets.</strong> Show that your real compensation is below market even if your nominal salary looks competitive. If your $95,000 local salary converts to $87,000 in real terms, but competing offers in similar-cost markets are at $100,000, you have documented evidence of undercompensation.
+      </p>
+      <p>
+        <strong>Scenario 3: Your employer wants to cut your pay for relocating to a cheaper city.</strong> Acknowledge that prices are lower in your destination metro, but demonstrate using RPP data exactly how much lower — and negotiate a proportional cut rather than an arbitrary one. If the destination RPP is 92 vs. your current 105, prices are 12.4% lower, so a proportional cut would be $92,000 ÷ $105,000 = 12.4% — not the larger cut your employer may propose.
+      </p>
+
+      <h2>Where to Find Supporting Wage Data</h2>
+      <p>
+        RPP data shows what things cost locally; you also need data on what people in your role earn locally. The best sources:
+      </p>
+      <p>
+        <strong>BLS Occupational Employment and Wage Statistics (OEWS).</strong> The Bureau of Labor Statistics publishes median and percentile wages for hundreds of job categories at the metro area level. This is the most authoritative source for local wage benchmarks. Search by occupation and metro at the BLS website.
+      </p>
+      <p>
+        <strong>Census Bureau's American Community Survey.</strong> The ACS provides median household and individual income data for metro areas and counties. Useful for understanding local income context.
+      </p>
+      <p>
+        <strong>H-1B Disclosure Data (if applicable).</strong> The Department of Labor's Foreign Labor Certification data shows actual wages paid for H-1B positions by employer and occupation, which can reveal what companies actually pay (vs. what they advertise).
+      </p>
+      <p>
+        Combining BLS wage data with BEA RPP data gives you a complete picture: what the market pays in your target location in nominal terms, and what that translates to in real purchasing power.
+      </p>
+
+      <h2>Remote Work: Should Salary Adjust for Location?</h2>
+      <p>
+        This is one of the most contested questions in modern employment. Two broad approaches exist, and understanding both helps you negotiate from a position of knowledge:
+      </p>
+      <p>
+        <strong>Location-based pay.</strong> Some employers (notably Google, Meta, and many large tech companies) adjust salaries based on where the employee lives, using cost of living indices to maintain roughly equal real purchasing power across geographies. Under this model, relocating to a cheaper city means a salary reduction — but your purchasing power stays roughly constant.
+      </p>
+      <p>
+        <strong>Role-based pay.</strong> Other employers pay the same salary regardless of employee location, typically anchored to their headquarters market or the national labor market. Under this model, moving from San Francisco to Omaha while keeping your salary is a large real raise — your nominal pay stays the same but your purchasing power increases substantially.
+      </p>
+      <p>
+        When negotiating with a location-based-pay employer, RPP data is your primary lever. If they propose cutting your salary by 20% for relocating to a city where prices are 12% lower, you have a quantitative case that the proposed cut is disproportionate. Show the math:
+      </p>
+      <ul>
+        <li>Current city RPP: 115. Your salary: $120,000. Real value: $104,348.</li>
+        <li>New city RPP: 92. To maintain real value: $104,348 × 92 ÷ 100 = $96,000.</li>
+        <li>A proportional cut would mean: $120,000 × (92 ÷ 115) = $96,000 — not the $85,000 they proposed.</li>
+      </ul>
+      <p>
+        This kind of structured, data-backed argument is harder to dismiss than a general objection to pay cuts.
+      </p>
+
+      <h2>Common Mistakes to Avoid</h2>
+      <p>
+        <strong>Using housing costs only.</strong> Relying solely on rent comparisons overstates cost differences in some cases and understates them in others. RPP includes all expenditure categories — use the comprehensive figure.
+      </p>
+      <p>
+        <strong>Using private cost-of-living calculators uncritically.</strong> Sites that publish cost-of-living comparisons use varying methodologies and may have incentives to exaggerate differences. BEA RPPs are derived from government survey data with transparent methodology, making them far more defensible in a professional negotiation.
+      </p>
+      <p>
+        <strong>Forgetting state income tax.</strong> RPP measures price levels, not tax rates. Moving from a no-income-tax state (Texas, Florida) to a high-income-tax state (California, New York) significantly affects your net take-home even if nominal salaries are similar. Always layer tax analysis on top of RPP analysis.
+      </p>
+      <p>
+        <strong>Anchoring too hard on cost of living alone.</strong> A well-rounded negotiation considers market wages, your specific skills, career trajectory, and company performance — not just RPP math. Cost of living data strengthens your case; it doesn't replace all other factors.
+      </p>
+
+      <h2>Frequently Asked Questions</h2>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">What is the difference between real wages and nominal wages?</summary>
+        <p>Nominal wages are the dollar amount on your paycheck. Real wages adjust for purchasing power — what those dollars can actually buy in your local market. A $90,000 salary in a city with RPP 85 has greater real purchasing power than a $100,000 salary in a city with RPP 110.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">How do I calculate purchasing power using RPP?</summary>
+        <p>Divide your nominal salary by the metro's RPP and multiply by 100. For example: $85,000 ÷ 92 × 100 = $92,391 in national-average purchasing power. This lets you compare offers across different cities on a true apples-to-apples basis.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">Should remote workers accept lower salaries for living in cheaper areas?</summary>
+        <p>This depends on your employment agreement and the company's compensation philosophy. Some companies practice location-based pay; others pay uniformly by role. If you're asked to accept a pay cut for relocating, RPP data gives you objective grounds to negotiate — your productivity does not change with your zip code.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">What data sources should I cite in a salary negotiation?</summary>
+        <p>The most credible sources are: BEA Regional Price Parities (cost of living), BLS Occupational Employment and Wage Statistics (local wages by occupation), and the Census Bureau's American Community Survey (median household income). These are official government data that cannot be dismissed as biased advocacy.</p>
+      </details>
+
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        <strong>Sources:</strong> U.S. Bureau of Economic Analysis, <a href="https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area" class="text-orange-600 dark:text-orange-400 hover:underline" target="_blank" rel="noopener noreferrer">Regional Price Parities by State and Metro Area</a>; U.S. Bureau of Labor Statistics, <a href="https://www.bls.gov/oes/" class="text-orange-600 dark:text-orange-400 hover:underline" target="_blank" rel="noopener noreferrer">Occupational Employment and Wage Statistics</a>.
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+        <strong>Last updated:</strong> February 2026
+      </p>
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</Base>

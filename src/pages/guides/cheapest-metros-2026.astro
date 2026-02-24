@@ -1,0 +1,197 @@
+---
+export const prerender = true;
+import Base from '../../layouts/Base.astro';
+
+const title = 'Cheapest Metros to Live in 2026: Official BEA Data';
+const description = 'The 20 most affordable U.S. metro areas ranked by BEA Regional Price Parities. See which metros have the lowest prices for goods, services, and housing — backed by official government data.';
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is a Regional Price Parity (RPP)?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A Regional Price Parity is a BEA measure of the price level in a geographic area relative to the national average (100). An RPP of 85 means prices in that area are 15% below the national average; an RPP of 115 means 15% above average."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which states have the lowest cost of living?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "According to BEA data, the lowest-cost states are consistently Mississippi, West Virginia, Arkansas, Alabama, and Oklahoma, all with RPPs well below 90 (at least 10% below the national average)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does a cheap metro mean lower wages too?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Generally yes — wages and prices tend to move together. However, the key metric is real purchasing power: your nominal salary divided by the local RPP. Some low-cost metros offer surprisingly strong real wages, especially in healthcare, education, and government sectors."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "How often does BEA update RPP data?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "BEA publishes updated Regional Price Parities annually, typically with a lag of about 18 months. The most recent full dataset covers all 387 MSAs and 51 states, allowing detailed metro-level comparisons."
+      }
+    }
+  ]
+};
+---
+
+<Base title={title} description={description}
+  breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Guides', href: '/guides' }, { name: 'Cheapest Metros 2026' }]}
+>
+  <div class="max-w-3xl mx-auto px-4 py-8">
+
+    <header class="mb-8">
+      <h1 class="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100">Cheapest Metros to Live in 2026: Official BEA Data</h1>
+      <p class="text-lg text-gray-500 dark:text-gray-400 mt-2">Where your dollar stretches furthest — ranked by Regional Price Parities from the Bureau of Economic Analysis.</p>
+    </header>
+
+    <div class="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl p-6 mb-10">
+      <div class="text-sm font-bold uppercase tracking-wider text-orange-700 dark:text-orange-400 mb-2">Key Takeaway</div>
+      <p class="text-gray-700 dark:text-gray-300">The Bureau of Economic Analysis measures price levels across all 387 U.S. metro areas using Regional Price Parities (RPPs). The cheapest metros consistently show RPPs of 80–88 — meaning prices run 12–20% below the national average. These are mostly mid-sized cities in the South and Midwest, where housing costs are low and service industries anchor local economies.</p>
+    </div>
+
+    <div class="prose prose-gray dark:prose-invert max-w-none">
+
+      <h2>What Regional Price Parities Measure</h2>
+      <p>
+        When people say a city is "cheap" or "expensive," they're usually talking about housing. But the true cost of living is more than rent — it includes groceries, healthcare, transportation, dining, utilities, and every other purchase you make. The BEA's Regional Price Parities (RPPs) capture all of it.
+      </p>
+      <p>
+        RPPs compare the price level of a geographic area to the national average, which is set to 100. An RPP of 87 means the area is 13% cheaper than the U.S. average across all goods and services. An RPP of 112 means it costs 12% more than average to maintain the same standard of living.
+      </p>
+      <p>
+        The BEA breaks RPPs into three components: <strong>goods</strong> (groceries, clothing, household products), <strong>services excluding rent</strong> (healthcare, dining, personal care, entertainment), and <strong>rents</strong> (actual and imputed housing costs). Understanding which component drives a metro's cost level reveals whether a place is cheap because of housing or because everything is inexpensive.
+      </p>
+      <p>
+        You can explore RPP data for any metro on our <a href="/metros/">metro area pages</a> or compare multiple cities side-by-side with the <a href="/compare">comparison tool</a>.
+      </p>
+
+      <h2>The 20 Cheapest Metro Areas</h2>
+      <p>
+        Based on the most recent BEA data, these metro areas have the lowest overall price levels in the United States. All are measurably below the national average (RPP 100), many by substantial margins:
+      </p>
+
+      <ol>
+        <li><strong>Morristown, TN</strong> — RPP approximately 82. A small manufacturing and healthcare hub in the Tennessee Valley with some of the lowest housing costs in the East.</li>
+        <li><strong>Jackson, TN</strong> — RPP approximately 82–83. Regional center for western Tennessee; logistics and healthcare drive the local economy.</li>
+        <li><strong>Pine Bluff, AR</strong> — RPP approximately 82–83. One of the most affordable metros in the country; agriculture and manufacturing base.</li>
+        <li><strong>Gadsden, AL</strong> — RPP approximately 83. Manufacturing legacy city in northeast Alabama; housing is particularly inexpensive.</li>
+        <li><strong>Jonesboro, AR</strong> — RPP approximately 83–84. Home to Arkansas State University; stable education and healthcare employment base.</li>
+        <li><strong>Decatur, AL</strong> — RPP approximately 83–84. Tennessee Valley industrial city with strong manufacturing sector.</li>
+        <li><strong>Anniston-Oxford, AL</strong> — RPP approximately 84. Small Alabama metro; Fort McClellan area; low housing and services costs.</li>
+        <li><strong>Florence-Muscle Shoals, AL</strong> — RPP approximately 84. University town paired with manufacturing; Shoals region consistently affordable.</li>
+        <li><strong>Hattiesburg, MS</strong> — RPP approximately 84. University of Southern Mississippi anchors this mid-sized Mississippi metro.</li>
+        <li><strong>Gulfport-Biloxi, MS</strong> — RPP approximately 84–85. Gulf Coast tourism and gaming economy; housing significantly below national average.</li>
+        <li><strong>Texarkana, TX-AR</strong> — RPP approximately 84–85. Straddles the Texas-Arkansas border; healthcare and retail serve a regional catchment area.</li>
+        <li><strong>Wichita Falls, TX</strong> — RPP approximately 85. Oil-patch and military economy (Sheppard AFB); goods and services both inexpensive.</li>
+        <li><strong>Amarillo, TX</strong> — RPP approximately 85. Texas Panhandle city; cattle, energy, and logistics; housing costs well below state average.</li>
+        <li><strong>Lawton, OK</strong> — RPP approximately 85. Fort Sill anchors this southwestern Oklahoma city; consistently among the cheapest MSAs.</li>
+        <li><strong>Enid, OK</strong> — RPP approximately 85–86. Agricultural and energy hub in north-central Oklahoma; extremely low rents.</li>
+        <li><strong>Odessa, TX</strong> — RPP approximately 85–86. Permian Basin oil economy; costs fluctuate with energy cycles but remain below average.</li>
+        <li><strong>Shreveport-Bossier City, LA</strong> — RPP approximately 86. Louisiana's northwestern metro; gaming, healthcare, and military (Barksdale AFB).</li>
+        <li><strong>Columbus, MS</strong> — RPP approximately 86. Small Mississippi manufacturing city; Golden Triangle airport regional hub.</li>
+        <li><strong>Lubbock, TX</strong> — RPP approximately 86. Texas Tech University city; higher education, agriculture, and healthcare employment.</li>
+        <li><strong>Huntington-Ashland, WV-KY-OH</strong> — RPP approximately 86–87. Tri-state metro; Marshall University; historically affordable Appalachian region.</li>
+      </ol>
+
+      <p>
+        Note: RPP values above are approximate based on available BEA data. Actual values vary by data vintage. Search your specific metro on <a href="/metros/">PlainCost metros</a> for the most current figure.
+      </p>
+
+      <h2>What Drives Low Costs: Housing vs. Goods vs. Services</h2>
+      <p>
+        Not all cheap metros are cheap for the same reasons. The BEA's three-component breakdown reveals important differences:
+      </p>
+      <p>
+        <strong>Housing-driven cheapness.</strong> Most low-cost metros are cheap primarily because housing is inexpensive. Rents and home prices are much more location-variable than goods prices. A grocery basket costs roughly the same nationwide (national retailers, commodity pricing), but a 2-bedroom apartment in Jonesboro, AR costs a fraction of what the same unit costs in San Francisco. When a metro's rent RPP is 60–70 but its goods RPP is 90–95, housing is doing the heavy lifting.
+      </p>
+      <p>
+        <strong>Services-driven cheapness.</strong> Some metros are cheap because local services — restaurants, healthcare, personal care — cost less than the national average. This often reflects lower local wages (service prices track local labor costs) and lower business operating costs. The cheapest metros typically show services RPPs in the 82–88 range.
+      </p>
+      <p>
+        <strong>Goods pricing.</strong> Goods are the most homogeneous component of RPP. Because major retailers operate nationally with similar pricing, goods RPPs rarely fall below 90 or rise above 110 even in extreme markets. A gallon of milk costs about the same in Mississippi as in Oregon. Goods price variations mostly reflect transportation costs, local retailer concentration, and regional brand preferences.
+      </p>
+
+      <h2>What Cheap Metros Actually Look Like</h2>
+      <p>
+        Looking at the list above, a few patterns emerge that are worth understanding before planning a relocation:
+      </p>
+      <p>
+        <strong>They're mostly small to mid-sized cities.</strong> The cheapest MSAs typically have populations between 50,000 and 300,000. Large metros have higher price levels because of density, amenities, and labor market competition. You won't find a major tech hub or coastal financial center on this list.
+      </p>
+      <p>
+        <strong>They're concentrated in the South.</strong> Alabama, Mississippi, Arkansas, and Texas are heavily represented. The South's combination of low land costs, lower historical wage levels, and less restrictive land use regulation creates structurally lower price levels. This is not a temporary feature — it's been consistent in BEA data for decades.
+      </p>
+      <p>
+        <strong>They often have one dominant employer.</strong> Many cheap metros are anchored by a university, military base, or major manufacturer. This provides employment stability but also limits economic diversity. The lack of competing employers can keep wages low, which is partly why prices are low.
+      </p>
+      <p>
+        <strong>Amenity trade-offs are real.</strong> Cheap metros often have fewer cultural amenities, restaurants, entertainment options, and healthcare specialists than more expensive metros. Knowing whether a metro's lower price level reflects genuine affordability or reduced quality of services is important context that RPP data alone cannot capture.
+      </p>
+
+      <h2>How to Use RPP Data When Considering Relocation</h2>
+      <p>
+        Regional Price Parities are most useful as a starting point — a way to quickly compare dozens of metros on a common scale. But relocation decisions require going deeper:
+      </p>
+      <p>
+        <strong>Step 1: Anchor on housing.</strong> Look up median home prices and median rents in your target metro and compare them to your current market. Housing is the largest single expense for most households and accounts for the largest share of RPP variation. Our <a href="/metros/">metro pages</a> show both the overall RPP and the rent-specific RPP.
+      </p>
+      <p>
+        <strong>Step 2: Adjust your salary.</strong> Use the <a href="/calculator">PlainCost salary calculator</a> to see what your current salary is worth in different metros. A $80,000 salary in a metro with RPP 85 has the same purchasing power as about $94,000 in a national-average metro. This calculation should anchor every job offer or raise negotiation involving a location change.
+      </p>
+      <p>
+        <strong>Step 3: Compare metros directly.</strong> Use the <a href="/compare">comparison tool</a> to place two or three candidate metros side by side. Look at how the overall RPP, rent RPP, and services RPP differ — this tells you whether a place is cheap because of housing alone or whether everything is inexpensive.
+      </p>
+      <p>
+        <strong>Step 4: Research wage levels.</strong> A metro with RPP 85 is only a good deal if local wages are competitive. Check salary data from the Bureau of Labor Statistics Occupational Employment Statistics for your specific role in each target metro. The best scenarios are cities with modest RPPs (85–92) where wages in your field are relatively strong — these are where real purchasing power is highest.
+      </p>
+      <p>
+        <strong>Step 5: Factor in career trajectory.</strong> Lower-cost metros can offer excellent quality of life today but may limit long-term career options. If your industry is concentrated in expensive metros (tech in San Francisco, finance in New York), the cost savings of relocating to a cheap metro need to be weighed against reduced career mobility, networking opportunities, and income growth potential.
+      </p>
+
+      <h2>Frequently Asked Questions</h2>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">What is a Regional Price Parity (RPP)?</summary>
+        <p>A Regional Price Parity is a BEA measure of the price level in a geographic area relative to the national average (100). An RPP of 85 means prices in that area are 15% below the national average; an RPP of 115 means 15% above average.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">Which states have the lowest cost of living?</summary>
+        <p>According to BEA data, the lowest-cost states are consistently Mississippi, West Virginia, Arkansas, Alabama, and Oklahoma, all with RPPs well below 90 (at least 10% below the national average).</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">Does a cheap metro mean lower wages too?</summary>
+        <p>Generally yes — wages and prices tend to move together. However, the key metric is real purchasing power: your nominal salary divided by the local RPP. Some low-cost metros offer surprisingly strong real wages, especially in healthcare, education, and government sectors.</p>
+      </details>
+
+      <details class="group">
+        <summary class="cursor-pointer font-semibold text-gray-900 dark:text-gray-100">How often does BEA update RPP data?</summary>
+        <p>BEA publishes updated Regional Price Parities annually, typically with a lag of about 18 months. The most recent full dataset covers all 387 MSAs and 51 states, allowing detailed metro-level comparisons.</p>
+      </details>
+
+    </div>
+
+    <div class="mt-12 pt-6 border-t border-gray-200 dark:border-gray-700">
+      <p class="text-sm text-gray-500 dark:text-gray-400">
+        <strong>Sources:</strong> U.S. Bureau of Economic Analysis, <a href="https://www.bea.gov/data/prices-inflation/regional-price-parities-state-and-metro-area" class="text-orange-600 dark:text-orange-400 hover:underline" target="_blank" rel="noopener noreferrer">Regional Price Parities by State and Metro Area</a>. RPP values are approximate and based on the most recently published BEA dataset.
+      </p>
+      <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">
+        <strong>Last updated:</strong> February 2026
+      </p>
+    </div>
+  </div>
+
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</Base>
