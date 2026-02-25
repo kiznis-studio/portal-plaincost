@@ -5,7 +5,9 @@ export const GET: APIRoute = async ({ locals }) => {
   const db = (locals as any).runtime.env.DB;
   const { results } = await db.prepare('SELECT slug FROM states ORDER BY name COLLATE NOCASE').all<{ slug: string }>();
 
-  const urls = results.map(s => `  <url><loc>${base}/state/${s.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>`).join('\n');
+  const urls = results.map(s => `  <url><loc>${base}/state/${s.slug}</loc><changefreq>monthly</changefreq><priority>0.8</priority></url>
+  <url><loc>${base}/state/${s.slug}/cheapest</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>
+  <url><loc>${base}/state/${s.slug}/most-expensive</loc><changefreq>monthly</changefreq><priority>0.7</priority></url>`).join('\n');
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
