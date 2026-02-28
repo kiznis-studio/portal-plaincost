@@ -282,6 +282,22 @@ insertAllState();
 
 console.log('Inserted', stateMap.size, 'states');
 
+// Pre-compute _stats for D1 efficiency
+db.prepare('CREATE TABLE IF NOT EXISTS _stats (key TEXT PRIMARY KEY, value TEXT NOT NULL)').run();
+
+const nsRow = db.prepare(`
+  SELECT
+    (SELECT COUNT(*) FROM msas) as msa_count,
+    (SELECT COUNT(*) FROM states) as state_count,
+    (SELECT MAX(rpp_all) FROM msas) as max_rpp_all,
+    (SELECT MIN(rpp_all) FROM msas) as min_rpp_all,
+    (SELECT AVG(rpp_all) FROM msas) as avg_rpp_all,
+    (SELECT MAX(rpp_rents) FROM msas) as max_rpp_rents,
+    (SELECT MIN(rpp_rents) FROM msas) as min_rpp_rents
+`).get();
+db.prepare("INSERT OR REPLACE INTO _stats VALUES ('national_stats', ?)").run(JSON.stringify(nsRow));
+console.log('Pre-computed _stats: national_stats');
+
 // Summary
 const totalMsas = db.prepare('SELECT COUNT(*) as c FROM msas').get().c;
 const totalMsaHist = db.prepare('SELECT COUNT(*) as c FROM msa_history').get().c;

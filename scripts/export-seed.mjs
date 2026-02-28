@@ -104,6 +104,8 @@ CREATE INDEX IF NOT EXISTS idx_msas_slug ON msas(slug);
 CREATE INDEX IF NOT EXISTS idx_msas_rpp ON msas(rpp_all DESC);
 CREATE INDEX IF NOT EXISTS idx_msa_history_cbsa ON msa_history(cbsa);
 CREATE INDEX IF NOT EXISTS idx_state_history_abbr ON state_history(abbr);
+
+CREATE TABLE IF NOT EXISTS _stats (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 `;
 
 writeFileSync(join(SEED_DIR, '00_schema.sql'), schema);
@@ -115,6 +117,7 @@ totalFiles += exportTable('states', ['abbr', 'name', 'slug', 'rpp_all', 'rpp_goo
 totalFiles += exportTable('msas', ['cbsa', 'name', 'slug', 'state_abbr', 'rpp_all', 'rpp_goods', 'rpp_services', 'rpp_rents', 'year', 'population', 'median_income']);
 totalFiles += exportTable('msa_history', ['cbsa', 'year', 'rpp_all', 'rpp_goods', 'rpp_services', 'rpp_rents']);
 totalFiles += exportTable('state_history', ['abbr', 'year', 'rpp_all', 'rpp_goods', 'rpp_services', 'rpp_rents']);
+totalFiles += exportTable('_stats', ['key', 'value']);
 
 console.log('\n=== Export Complete ===');
 console.log('Total files: ' + totalFiles);

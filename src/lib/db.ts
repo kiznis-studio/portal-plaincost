@@ -163,19 +163,27 @@ export async function getLeastExpensiveMsasByState(db: D1Database, stateAbbr: st
 // --- Search ---
 
 export async function searchMsas(db: D1Database, query: string, limit = 20): Promise<Msa[]> {
-  const like = '%' + query.trim() + '%';
+  const trimmed = query.trim();
+  const like = trimmed + '%';
   const { results } = await db.prepare(`
     SELECT * FROM msas
     WHERE name LIKE ? OR cbsa = ?
     ORDER BY population DESC
     LIMIT ?
-  `).bind(like, query.trim(), limit).all<Msa>();
+  `).bind(like, trimmed, limit).all<Msa>();
   return results;
 }
 
 // --- Stats ---
 
 export async function getNationalStats(db: D1Database) {
+  try {
+    const stat = await db.prepare("SELECT value FROM _stats WHERE key = 'national_stats'").first<{ value: string }>();
+    if (stat) return JSON.parse(stat.value) as {
+      msa_count: number; state_count: number; max_rpp_all: number; min_rpp_all: number;
+      avg_rpp_all: number; max_rpp_rents: number; min_rpp_rents: number;
+    };
+  } catch { /* _stats may not exist yet */ }
   return db.prepare(`
     SELECT
       (SELECT COUNT(*) FROM msas) as msa_count,
@@ -186,12 +194,7 @@ export async function getNationalStats(db: D1Database) {
       (SELECT MAX(rpp_rents) FROM msas) as max_rpp_rents,
       (SELECT MIN(rpp_rents) FROM msas) as min_rpp_rents
   `).first<{
-    msa_count: number;
-    state_count: number;
-    max_rpp_all: number;
-    min_rpp_all: number;
-    avg_rpp_all: number;
-    max_rpp_rents: number;
-    min_rpp_rents: number;
+    msa_count: number; state_count: number; max_rpp_all: number; min_rpp_all: number;
+    avg_rpp_all: number; max_rpp_rents: number; min_rpp_rents: number;
   }>();
 }
