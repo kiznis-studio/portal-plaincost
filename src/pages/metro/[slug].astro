@@ -1,7 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import AdSlot from '../../components/ads/AdSlot.astro';
-import { getMsaBySlug, getMsaHistory, formatRpp, rppDiff, formatMoney } from '../../lib/db';
+import { getMsaBySlug, getMsaHistory, getTopMsasByPopulation, formatRpp, rppDiff, formatMoney } from '../../lib/db';
 
 const { slug } = Astro.params;
 if (!slug) return Astro.redirect('/404');
@@ -10,7 +10,11 @@ const db = Astro.locals.runtime.env.DB;
 const msa = await getMsaBySlug(db, slug);
 if (!msa) return Astro.redirect('/404');
 
-const history = await getMsaHistory(db, msa.cbsa);
+const [history, topMetros] = await Promise.all([
+  getMsaHistory(db, msa.cbsa),
+  getTopMsasByPopulation(db, 10),
+]);
+const compareMetros = topMetros.filter(m => m.slug !== slug).slice(0, 5);
 
 const categories = [
   { label: 'Overall', value: msa.rpp_all, key: 'rpp_all' },
@@ -175,6 +179,25 @@ const faqSchema = faqItems.length > 0 ? JSON.stringify({
               ))}
             </tbody>
           </table>
+        </div>
+      </div>
+    )}
+
+    <!-- Compare to other metros -->
+    {compareMetros.length > 0 && (
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+        <h2 class="text-lg font-semibold mb-3">Compare to Other Metros</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {compareMetros.map(m => (
+            <a href={`/compare/${slug}/${m.slug}`}
+              class="text-sm px-3 py-2 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors text-center">
+              vs {m.name.split(',')[0]}
+            </a>
+          ))}
+          <a href="/compare"
+            class="text-sm px-3 py-2 rounded-lg border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors text-center text-[var(--color-primary)]">
+            Custom Compare &rarr;
+          </a>
         </div>
       </div>
     )}

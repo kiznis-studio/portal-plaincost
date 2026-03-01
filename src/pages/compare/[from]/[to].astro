@@ -1,0 +1,314 @@
+---
+import Base from '../../../layouts/Base.astro';
+import AdSlot from '../../../components/ads/AdSlot.astro';
+import { getMsaBySlug, getTopMsasByPopulation, formatRpp, salaryEquivalent, formatMoney } from '../../../lib/db';
+
+const { from: fromSlug, to: toSlug } = Astro.params;
+if (!fromSlug || !toSlug || fromSlug === toSlug) return Astro.redirect('/compare');
+
+const db = Astro.locals.runtime.env.DB;
+const [fromMsa, toMsa] = await Promise.all([
+  getMsaBySlug(db, fromSlug),
+  getMsaBySlug(db, toSlug),
+]);
+
+if (!fromMsa || !toMsa) return Astro.redirect('/compare');
+
+const fromShort = fromMsa.name.split(',')[0];
+const toShort = toMsa.name.split(',')[0];
+
+const categories = [
+  { label: 'Overall', from: fromMsa.rpp_all, to: toMsa.rpp_all },
+  { label: 'Goods', from: fromMsa.rpp_goods, to: toMsa.rpp_goods },
+  { label: 'Services', from: fromMsa.rpp_services, to: toMsa.rpp_services },
+  { label: 'Rents', from: fromMsa.rpp_rents, to: toMsa.rpp_rents },
+];
+
+const salary100k = salaryEquivalent(100000, fromMsa.rpp_all, toMsa.rpp_all);
+const salary75k = salaryEquivalent(75000, fromMsa.rpp_all, toMsa.rpp_all);
+const salary50k = salaryEquivalent(50000, fromMsa.rpp_all, toMsa.rpp_all);
+const salary150k = salaryEquivalent(150000, fromMsa.rpp_all, toMsa.rpp_all);
+const overallDiff = toMsa.rpp_all - fromMsa.rpp_all;
+const pctDiff = ((toMsa.rpp_all - fromMsa.rpp_all) / fromMsa.rpp_all * 100).toFixed(1);
+const moreOrLess = overallDiff > 0 ? 'more expensive' : overallDiff < 0 ? 'less expensive' : 'equally expensive';
+
+// Get top metros for "also compare" links
+const topMetros = await getTopMsasByPopulation(db, 20);
+const otherMetros = topMetros.filter(m => m.slug !== fromSlug && m.slug !== toSlug).slice(0, 8);
+
+const title = `${fromShort} vs ${toShort}: Cost of Living Comparison`;
+const description = `Compare cost of living: ${fromShort} (RPP ${formatRpp(fromMsa.rpp_all)}) vs ${toShort} (${formatRpp(toMsa.rpp_all)}). A $100K salary in ${fromShort} = $${salary100k.toLocaleString()} in ${toShort}.`;
+
+const faqItems = [
+  {
+    q: `Is ${toShort} more expensive than ${fromShort}?`,
+    a: `${toShort} is ${Math.abs(parseFloat(pctDiff))}% ${moreOrLess} than ${fromShort}. The overall cost index is ${formatRpp(toMsa.rpp_all)} vs ${formatRpp(fromMsa.rpp_all)} (national average = 100).`,
+  },
+  {
+    q: `What salary in ${toShort} equals $100K in ${fromShort}?`,
+    a: `A $100,000 salary in ${fromShort} has the same purchasing power as $${salary100k.toLocaleString()} in ${toShort}. This is based on the BEA Regional Price Parity indexes.`,
+  },
+  {
+    q: `How do rents compare between ${fromShort} and ${toShort}?`,
+    a: `Rents in ${fromShort} are indexed at ${formatRpp(fromMsa.rpp_rents)} while ${toShort} is at ${formatRpp(toMsa.rpp_rents)} (national average = 100). ${fromMsa.rpp_rents > toMsa.rpp_rents ? fromShort : toShort} has higher rents.`,
+  },
+];
+
+const faqSchema = JSON.stringify({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqItems.map(f => ({
+    '@type': 'Question',
+    name: f.q,
+    acceptedAnswer: { '@type': 'Answer', text: f.a },
+  })),
+});
+---
+
+<Base
+  title={title}
+  description={description}
+  breadcrumbs={[
+    { name: 'Home', href: '/' },
+    { name: 'Compare', href: '/compare' },
+    { name: `${fromShort} vs ${toShort}` },
+  ]}
+>
+  <section class="max-w-4xl mx-auto px-4 py-8">
+    <div class="mb-2 text-sm text-[var(--color-text-secondary)]">
+      <a href="/" class="hover:text-[var(--color-primary)]">Home</a> /
+      <a href="/compare" class="hover:text-[var(--color-primary)]">Compare</a> /
+    </div>
+    <h1 class="text-2xl md:text-3xl font-bold mb-2">{fromShort} vs {toShort}</h1>
+    <p class="text-[var(--color-text-secondary)] mb-6">
+      Cost of living comparison based on BEA Regional Price Parities. {toShort} is
+      <strong>{Math.abs(parseFloat(pctDiff))}% {moreOrLess}</strong> than {fromShort}.
+    </p>
+
+    <!-- Key Comparison -->
+    <div class="grid grid-cols-2 gap-4 mb-8">
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5 text-center">
+        <div class="text-sm text-[var(--color-text-secondary)] mb-1">{fromShort}</div>
+        <div class={`text-3xl font-bold ${fromMsa.rpp_all >= 100 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}`}>
+          {formatRpp(fromMsa.rpp_all)}
+        </div>
+        <div class="text-xs text-[var(--color-text-secondary)] mt-1">Cost Index</div>
+      </div>
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-5 text-center">
+        <div class="text-sm text-[var(--color-text-secondary)] mb-1">{toShort}</div>
+        <div class={`text-3xl font-bold ${toMsa.rpp_all >= 100 ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}`}>
+          {formatRpp(toMsa.rpp_all)}
+        </div>
+        <div class="text-xs text-[var(--color-text-secondary)] mt-1">Cost Index</div>
+      </div>
+    </div>
+
+    <!-- Category Breakdown -->
+    <h2 class="text-lg font-semibold mb-4">Category Breakdown</h2>
+    <div class="overflow-x-auto mb-8">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="border-b border-[var(--color-border)] text-left text-[var(--color-text-secondary)]">
+            <th class="pb-2 font-medium">Category</th>
+            <th class="pb-2 font-medium text-right">{fromShort}</th>
+            <th class="pb-2 font-medium text-right">{toShort}</th>
+            <th class="pb-2 font-medium text-right">Difference</th>
+          </tr>
+        </thead>
+        <tbody>
+          {categories.map(cat => {
+            const diff = cat.to - cat.from;
+            return (
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="py-3 font-medium">{cat.label}</td>
+                <td class="py-3 text-right tabular-nums">{formatRpp(cat.from)}</td>
+                <td class="py-3 text-right tabular-nums">{formatRpp(cat.to)}</td>
+                <td class="py-3 text-right">
+                  <span class={diff > 0 ? 'text-amber-600 dark:text-amber-400' : diff < 0 ? 'text-teal-600 dark:text-teal-400' : ''}>
+                    {diff > 0 ? '+' : ''}{diff.toFixed(1)}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Visual Comparison Bars -->
+    <h2 class="text-lg font-semibold mb-4">Visual Comparison</h2>
+    <div class="space-y-4 mb-8">
+      {categories.map(cat => {
+        const maxVal = Math.max(cat.from, cat.to, 120);
+        return (
+          <div>
+            <div class="text-sm font-medium mb-1">{cat.label}</div>
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-[var(--color-text-secondary)] w-20 shrink-0 truncate">{fromShort}</span>
+                <div class="flex-1 bg-[var(--color-border)] rounded-full h-5 overflow-hidden relative">
+                  <div class="h-full rounded-full bg-[var(--color-primary)]" style={`width: ${(cat.from / maxVal) * 100}%`} />
+                  <div class="absolute top-0 h-full w-px bg-[var(--color-text)]" style={`left: ${(100 / maxVal) * 100}%`} />
+                </div>
+                <span class="text-xs font-medium w-10 text-right">{formatRpp(cat.from)}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span class="text-xs text-[var(--color-text-secondary)] w-20 shrink-0 truncate">{toShort}</span>
+                <div class="flex-1 bg-[var(--color-border)] rounded-full h-5 overflow-hidden relative">
+                  <div class="h-full rounded-full bg-[var(--color-accent,var(--color-primary))]" style={`width: ${(cat.to / maxVal) * 100}%; opacity: 0.7`} />
+                  <div class="absolute top-0 h-full w-px bg-[var(--color-text)]" style={`left: ${(100 / maxVal) * 100}%`} />
+                </div>
+                <span class="text-xs font-medium w-10 text-right">{formatRpp(cat.to)}</span>
+              </div>
+            </div>
+          </div>
+        );
+      })}
+      <p class="text-xs text-[var(--color-text-secondary)]">Vertical line = national average (100)</p>
+    </div>
+
+    <!-- Salary Equivalents -->
+    <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+      <h2 class="text-lg font-semibold mb-3">Salary Equivalents</h2>
+      <p class="text-sm text-[var(--color-text-secondary)] mb-4">
+        What a salary in {fromShort} would need to be in {toShort} for the same purchasing power:
+      </p>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead>
+            <tr class="border-b border-[var(--color-border)] text-[var(--color-text-secondary)]">
+              <th class="pb-2 text-left font-medium">In {fromShort}</th>
+              <th class="pb-2 text-right font-medium">In {toShort}</th>
+              <th class="pb-2 text-right font-medium">Difference</th>
+            </tr>
+          </thead>
+          <tbody>
+            {[
+              { from: 50000, to: salary50k },
+              { from: 75000, to: salary75k },
+              { from: 100000, to: salary100k },
+              { from: 150000, to: salary150k },
+            ].map(row => (
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="py-2 font-medium">${row.from.toLocaleString()}</td>
+                <td class="py-2 text-right text-[var(--color-primary)] font-bold">${row.to.toLocaleString()}</td>
+                <td class="py-2 text-right">
+                  <span class={row.to > row.from ? 'text-amber-600 dark:text-amber-400' : 'text-teal-600 dark:text-teal-400'}>
+                    {row.to > row.from ? '+' : ''}${(row.to - row.from).toLocaleString()}
+                  </span>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p class="text-xs text-[var(--color-text-secondary)] mt-3">
+        Use the <a href="/calculator" class="text-[var(--color-primary)] hover:underline">salary calculator</a> for custom amounts.
+      </p>
+    </div>
+
+    <AdSlot slot="mid" />
+
+    <!-- Population & Income Context -->
+    {(fromMsa.population || toMsa.population) && (
+      <div class="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-xl p-6 mb-8">
+        <h2 class="text-lg font-semibold mb-3">Metro Context</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full text-sm">
+            <thead>
+              <tr class="border-b border-[var(--color-border)] text-[var(--color-text-secondary)]">
+                <th class="pb-2 text-left font-medium">Metric</th>
+                <th class="pb-2 text-right font-medium">{fromShort}</th>
+                <th class="pb-2 text-right font-medium">{toShort}</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="py-2">Population</td>
+                <td class="py-2 text-right">{fromMsa.population ? fromMsa.population.toLocaleString() : 'N/A'}</td>
+                <td class="py-2 text-right">{toMsa.population ? toMsa.population.toLocaleString() : 'N/A'}</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="py-2">Median Income</td>
+                <td class="py-2 text-right">{fromMsa.median_income ? formatMoney(fromMsa.median_income) : 'N/A'}</td>
+                <td class="py-2 text-right">{toMsa.median_income ? formatMoney(toMsa.median_income) : 'N/A'}</td>
+              </tr>
+              <tr class="border-b border-[var(--color-border)]">
+                <td class="py-2">Data Year</td>
+                <td class="py-2 text-right">{fromMsa.year}</td>
+                <td class="py-2 text-right">{toMsa.year}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    )}
+
+    <!-- Reverse Comparison -->
+    <div class="flex flex-wrap gap-3 mb-8">
+      <a href={`/compare/${toSlug}/${fromSlug}`}
+        class="text-sm px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors">
+        Reverse: {toShort} &rarr; {fromShort}
+      </a>
+      <a href={`/metro/${fromSlug}`}
+        class="text-sm px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors">
+        {fromShort} Details
+      </a>
+      <a href={`/metro/${toSlug}`}
+        class="text-sm px-4 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors">
+        {toShort} Details
+      </a>
+    </div>
+
+    <!-- Also Compare -->
+    {otherMetros.length > 0 && (
+      <div class="mb-8">
+        <h2 class="text-lg font-semibold mb-3">Also Compare</h2>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {otherMetros.map(m => (
+            <a href={`/compare/${fromSlug}/${m.slug}`}
+              class="text-sm px-3 py-2 rounded-lg bg-[var(--color-surface)] border border-[var(--color-border)] hover:border-[var(--color-primary)] transition-colors text-center truncate">
+              vs {m.name.split(',')[0]}
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    <!-- FAQ -->
+    {faqItems.length > 0 && (
+      <section class="mb-8">
+        <h2 class="text-lg font-semibold mb-4">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          {faqItems.map(f => (
+            <details class="group bg-[var(--color-surface)] rounded-lg border border-[var(--color-border)]">
+              <summary class="flex items-center justify-between p-4 cursor-pointer font-medium text-[var(--color-text)]">
+                {f.q}
+                <span class="ml-2 text-[var(--color-text-secondary)] group-open:rotate-180 transition-transform">&#9660;</span>
+              </summary>
+              <div class="px-4 pb-4 text-[var(--color-text-secondary)] text-sm">
+                {f.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Cross-Portal Links -->
+    <div class="mt-10 pt-6 border-t border-[var(--color-border)]">
+      <h3 class="text-sm font-semibold text-[var(--color-muted)] uppercase tracking-wider mb-3">Explore More Data</h3>
+      <div class="flex flex-wrap gap-2">
+        <a href="/calculator" class="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors">Salary Calculator &rarr;</a>
+        <a href="/rankings" class="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors">Cost Rankings &rarr;</a>
+        <a href="https://plainrent.com" class="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors" target="_blank" rel="noopener">Rent Data &rarr;</a>
+        <a href="https://wagedex.com" class="text-sm px-3 py-1.5 rounded-lg bg-[var(--color-card)] border border-[var(--color-border)] hover:border-[var(--color-accent)] transition-colors" target="_blank" rel="noopener">Salary Data &rarr;</a>
+      </div>
+    </div>
+
+    <p class="text-xs text-[var(--color-text-secondary)] mt-6">
+      Source: Bureau of Economic Analysis, Regional Price Parities ({fromMsa.year}). Index where national average = 100.
+    </p>
+  </section>
+  <script type="application/ld+json" set:html={faqSchema} />
+</Base>

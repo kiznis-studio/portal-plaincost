@@ -160,6 +160,15 @@ export async function getLeastExpensiveMsasByState(db: D1Database, stateAbbr: st
   return results;
 }
 
+// --- Top Metros (for compare pairs) ---
+
+export async function getTopMsasByPopulation(db: D1Database, limit = 50): Promise<Msa[]> {
+  const { results } = await db.prepare(
+    'SELECT * FROM msas WHERE population IS NOT NULL ORDER BY population DESC LIMIT ?'
+  ).bind(limit).all<Msa>();
+  return results;
+}
+
 // --- Search ---
 
 export async function searchMsas(db: D1Database, query: string, limit = 20): Promise<Msa[]> {
