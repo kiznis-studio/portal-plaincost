@@ -80,6 +80,7 @@ const faqSchema = faqItems.length > 0 ? JSON.stringify({
 <Base
   title={`Cost of Living in ${msa.name}`}
   description={`Cost of living in ${msa.name}: overall index ${formatRpp(msa.rpp_all)} (${rppDiff(msa.rpp_all)}). Compare goods, services, and rent prices vs national average.`}
+  image={`/og/${slug}.png`}
   breadcrumbs={[{ name: 'Home', href: '/' }, { name: 'Metros', href: '/metros' }, { name: msa.name }]}
 >
   <section class="max-w-4xl mx-auto px-4 py-8">
